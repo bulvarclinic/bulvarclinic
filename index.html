@@ -9,35 +9,34 @@
     <!-- FontAwesome İkon Kütüphanesi -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 h-screen flex overflow-hidden">
+<body class="bg-slate-950 font-sans text-slate-100 h-screen flex overflow-hidden">
 
     <!-- Sol Menü -->
-    <aside class="w-16 bg-white border-r border-slate-200 flex flex-col items-center py-4 justify-between z-20 shadow-sm">
+    <aside class="w-16 bg-slate-900 border-r border-slate-800 flex flex-col items-center py-4 justify-between z-20 shadow-lg">
         <div class="flex flex-col items-center gap-6">
             <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white text-lg shadow-md cursor-pointer" onclick="switchTab('takvim-sec')">
                 <i class="fa-solid fa-tooth"></i>
             </div>
             <!-- Menü Butonları -->
             <nav class="flex flex-col gap-3">
-                <button onclick="switchTab('takvim-sec')" id="btn-takvim" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-blue-600 bg-blue-50 transition" title="Takvim">
+                <button onclick="switchTab('takvim-sec')" id="btn-takvim" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-blue-400 bg-blue-950/50 border border-blue-800/50 transition" title="Takvim">
                     <i class="fa-solid fa-calendar-days"></i>
                 </button>
-                <button onclick="switchTab('hastalar-sec')" id="btn-hastalar" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition" title="Hastalar & Loglar">
+                <button onclick="switchTab('hastalar-sec')" id="btn-hastalar" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition" title="Hastalar & Loglar">
                     <i class="fa-solid fa-users text-lg"></i>
                 </button>
-                <button onclick="switchTab('taksit-sec')" id="btn-taksit" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition relative" title="Taksit Takibi">
+                <button onclick="switchTab('taksit-sec')" id="btn-taksit" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition relative" title="Taksit Takibi">
                     <i class="fa-solid fa-credit-card text-lg"></i>
                     <span id="taksit-bildirim-rozet" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
                 </button>
-                <!-- Yeni Eklenen Fiyat Listesi Butonu -->
-                <button onclick="switchTab('fiyat-sec')" id="btn-fiyat" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition" title="Fiyat Listesi">
+                <button onclick="switchTab('fiyat-sec')" id="btn-fiyat" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition" title="Fiyat Listesi">
                     <i class="fa-solid fa-tags text-lg"></i>
                 </button>
             </nav>
         </div>
 
         <!-- Sol Alttaki Profil Sekmesi Butonu -->
-        <button onclick="switchTab('profil-sec')" id="btn-profil" class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-slate-300 hover:border-blue-500 transition relative" title="Personel Yönetimi / Profil">
+        <button onclick="switchTab('profil-sec')" id="btn-profil" class="w-10 h-10 rounded-full bg-slate-800 overflow-hidden border-2 border-slate-700 hover:border-blue-500 transition relative" title="Personel Yönetimi / Profil">
             <img id="sidebar-profil-resim" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Profil" class="w-full h-full object-cover">
         </button>
     </aside>
@@ -46,21 +45,20 @@
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         
         <!-- Üst Bar -->
-        <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 z-10 shadow-sm">
-            <div class="flex items-center gap-4">
-                <!-- Logo ve Başlık Alanı -->
-                <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('takvim-sec')">
-                    <img id="klinik-logo" src="logo.png" alt="Bulvar Clinic Logo" class="h-10 w-auto object-contain">
-                    <h1 class="text-xl font-bold text-slate-800">Bulvar Clinic</h1>
+        <header class="bg-slate-900 border-b border-slate-800 h-20 flex items-center justify-between px-6 z-10 shadow-md">
+            <div class="flex items-center gap-6">
+                <!-- Logo Alanı (Yazı Silindi, Logo Büyütüldü) -->
+                <div class="flex items-center cursor-pointer" onclick="switchTab('takvim-sec')">
+                    <img id="klinik-logo" src="logo.png" alt="Bulvar Clinic Logo" class="h-14 w-auto object-contain">
                 </div>
                 
                 <!-- Hafta Değiştirme Butonları (Takvimde Görünür) -->
-                <div id="hafta-kontrolleri" class="flex items-center gap-2 bg-slate-100 p-1 rounded-lg border border-slate-200 text-sm ml-2">
-                    <button onclick="changeWeek(-1)" class="px-2.5 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 shadow-sm transition">
+                <div id="hafta-kontrolleri" class="flex items-center gap-2 bg-slate-950 p-1.5 rounded-xl border border-slate-800 text-sm">
+                    <button onclick="changeWeek(-1)" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 shadow-sm transition">
                         <i class="fa-solid fa-chevron-left text-xs"></i> Önceki Hafta
                     </button>
-                    <span id="hafta-etiket" class="px-3 font-semibold text-slate-700 text-xs"></span>
-                    <button onclick="changeWeek(1)" class="px-2.5 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 shadow-sm transition">
+                    <span id="hafta-etiket" class="px-4 font-semibold text-slate-200 text-xs"></span>
+                    <button onclick="changeWeek(1)" class="px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 shadow-sm transition">
                         Sonraki Hafta <i class="fa-solid fa-chevron-right text-xs"></i>
                     </button>
                 </div>
@@ -68,17 +66,17 @@
 
             <div class="flex items-center gap-3">
                 <!-- Aktif Kullanıcı Göstergesi -->
-                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg mr-2">
+                <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg mr-2">
                     <div class="w-2 h-2 rounded-full bg-green-500"></div>
-                    <span id="header-aktif-personel" class="text-xs font-semibold text-slate-700">Yönlendiriliyor...</span>
+                    <span id="header-aktif-personel" class="text-xs font-semibold text-slate-300">Yönlendiriliyor...</span>
                 </div>
 
-                <!-- Sağ Üst Butonlar Kapsayıcısı (Sadece Takvimde Görünür) -->
+                <!-- Sağ Üst Butonlar Kapsayıcısı -->
                 <div id="header-butonlar" class="flex items-center gap-3">
-                    <button onclick="openModal('randevu-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
+                    <button onclick="openModal('randevu-modal')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
                         <i class="fa-solid fa-plus text-xs"></i> Randevu Ekle
                     </button>
-                    <button onclick="openModal('hasta-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
+                    <button onclick="openModal('hasta-modal')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
                         <i class="fa-solid fa-user-plus text-xs"></i> Hasta Kaydet
                     </button>
                 </div>
@@ -86,46 +84,46 @@
         </header>
 
         <!-- 1. SEKMELER: HAFTALIK TAKVİM -->
-        <main id="takvim-sec" class="flex-1 flex flex-col bg-white overflow-hidden">
+        <main id="takvim-sec" class="flex-1 flex flex-col bg-slate-950 overflow-hidden">
             <!-- Gün Başlıkları -->
-            <div class="grid grid-cols-8 border-b border-slate-200 bg-slate-50 text-center font-semibold text-sm text-slate-700 py-3 shadow-xs">
-                <div class="border-r border-slate-200 text-slate-400 font-normal">Saat</div>
-                <div class="border-r border-slate-200" id="gun-0">Pzt</div>
-                <div class="border-r border-slate-200" id="gun-1">Sal</div>
-                <div class="border-r border-slate-200" id="gun-2">Çar</div>
-                <div class="border-r border-slate-200" id="gun-3">Per</div>
-                <div class="border-r border-slate-200" id="gun-4">Cum</div>
-                <div class="border-r border-slate-200" id="gun-5">Cmt</div>
+            <div class="grid grid-cols-8 border-b border-slate-800 bg-slate-900 text-center font-semibold text-sm text-slate-300 py-3 shadow-xs">
+                <div class="border-r border-slate-800 text-slate-500 font-normal">Saat</div>
+                <div class="border-r border-slate-800" id="gun-0">Pzt</div>
+                <div class="border-r border-slate-800" id="gun-1">Sal</div>
+                <div class="border-r border-slate-800" id="gun-2">Çar</div>
+                <div class="border-r border-slate-800" id="gun-3">Per</div>
+                <div class="border-r border-slate-800" id="gun-4">Cum</div>
+                <div class="border-r border-slate-800" id="gun-5">Cmt</div>
                 <div id="gun-6">Paz</div>
             </div>
 
             <!-- Saatler (08:00 - 19:00) -->
-            <div id="takvim-body" class="flex-1 overflow-y-auto divide-y divide-slate-100"></div>
+            <div id="takvim-body" class="flex-1 overflow-y-auto divide-y divide-slate-900"></div>
         </main>
 
         <!-- 2. SEKMELER: HASTA KAYITLARI & LOGLARI -->
-        <main id="hastalar-sec" class="flex-1 bg-slate-50 p-6 overflow-y-auto hidden">
+        <main id="hastalar-sec" class="flex-1 bg-slate-950 p-6 overflow-y-auto hidden">
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Hasta Kayıtları ve Geliş Logları</h2>
-                    <p class="text-xs text-slate-500">Kayıtlı hastaların dosya numaraları, TC No, telefon, yaş ve geliş sebeplerinin listesi</p>
+                    <h2 class="text-xl font-bold text-slate-100">Hasta Kayıtları ve Geliş Logları</h2>
+                    <p class="text-xs text-slate-400">Hastaya ait bilgileri düzenlemek için satırın üzerine tıklayabilirsiniz.</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <!-- Hasta Arama Girişi -->
                     <div class="relative">
                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <input type="text" id="hasta-ara-input" onkeyup="hastaAramaYap()" placeholder="Hasta adı, TC veya Dosya No ara..." class="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-xs w-64">
+                        <input type="text" id="hasta-ara-input" onkeyup="hastaAramaYap()" placeholder="Hasta adı, TC veya Dosya No ara..." class="pl-9 pr-4 py-2 border border-slate-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-slate-900 text-slate-200 shadow-xs w-64">
                     </div>
-                    <button onclick="openModal('hasta-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
+                    <button onclick="openModal('hasta-modal')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
                         <i class="fa-solid fa-plus text-xs"></i> Yeni Hasta Logu Ekle
                     </button>
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-slate-900 rounded-xl border border-slate-800 shadow-sm overflow-hidden">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase font-semibold">
+                        <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-xs uppercase font-semibold">
                             <th class="p-4">Dosya No</th>
                             <th class="p-4">TC Kimlik No</th>
                             <th class="p-4">Hasta Adı Soyadı</th>
@@ -134,7 +132,7 @@
                             <th class="p-4 text-center">İşlem</th>
                         </tr>
                     </thead>
-                    <tbody id="hasta-tablosu-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                    <tbody id="hasta-tablosu-body" class="divide-y divide-slate-800 text-sm text-slate-300">
                         <!-- JS ile dolacak -->
                     </tbody>
                 </table>
@@ -142,21 +140,21 @@
         </main>
 
         <!-- 3. SEKMELER: TAKSİTLİ ÖDEME TAKİBİ -->
-        <main id="taksit-sec" class="flex-1 bg-slate-50 p-6 overflow-y-auto hidden">
+        <main id="taksit-sec" class="flex-1 bg-slate-950 p-6 overflow-y-auto hidden">
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Taksitli Ödeme Takibi</h2>
-                    <p class="text-xs text-slate-500">Hasta taksit ödemeleri, kalan tutarlar ve gecikmiş ödeme bildirimleri</p>
+                    <h2 class="text-xl font-bold text-slate-100">Taksitli Ödeme Takibi</h2>
+                    <p class="text-xs text-slate-400">Hasta taksit ödemeleri, kalan tutarlar ve gecikmiş ödeme bildirimleri</p>
                 </div>
-                <button onclick="openModal('taksit-modal')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
+                <button onclick="openModal('taksit-modal')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
                     <i class="fa-solid fa-plus text-xs"></i> Yeni Taksit Planı Ekle
                 </button>
             </div>
 
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="bg-slate-900 rounded-xl border border-slate-800 shadow-sm overflow-hidden">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase font-semibold">
+                        <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-xs uppercase font-semibold">
                             <th class="p-4">Hasta Adı</th>
                             <th class="p-4">İşlem / Tedavi</th>
                             <th class="p-4">Toplam Tutar</th>
@@ -167,7 +165,7 @@
                             <th class="p-4 text-center">İşlem</th>
                         </tr>
                     </thead>
-                    <tbody id="taksit-tablosu-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                    <tbody id="taksit-tablosu-body" class="divide-y divide-slate-800 text-sm text-slate-300">
                         <!-- JS ile dolacak -->
                     </tbody>
                 </table>
@@ -175,27 +173,27 @@
         </main>
 
         <!-- 4. SEKMELER: FİYAT LİSTESİ -->
-        <main id="fiyat-sec" class="flex-1 bg-slate-50 p-6 overflow-y-auto hidden">
+        <main id="fiyat-sec" class="flex-1 bg-slate-950 p-6 overflow-y-auto hidden">
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Tedavi Fiyat Listesi</h2>
-                    <p class="text-xs text-slate-500">Güncel klinik işlem ücretleri ve tedavi kalemleri</p>
+                    <h2 class="text-xl font-bold text-slate-100">Tedavi Fiyat Listesi</h2>
+                    <p class="text-xs text-slate-400">Güncel klinik işlem ücretleri ve tedavi kalemleri</p>
                 </div>
                 <div class="relative">
                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                    <input type="text" id="fiyat-ara-input" onkeyup="fiyatAramaYap()" placeholder="İşlem veya tedavi ara..." class="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white shadow-xs">
+                    <input type="text" id="fiyat-ara-input" onkeyup="fiyatAramaYap()" placeholder="İşlem veya tedavi ara..." class="pl-9 pr-4 py-2 border border-slate-800 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-slate-900 text-slate-200 shadow-xs">
                 </div>
             </div>
 
-            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden max-w-4xl mx-auto">
+            <div class="bg-slate-900 rounded-xl border border-slate-800 shadow-sm overflow-hidden max-w-4xl mx-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase font-semibold">
+                        <tr class="bg-slate-950 border-b border-slate-800 text-slate-400 text-xs uppercase font-semibold">
                             <th class="p-4">İşlem / Tedavi Adı</th>
                             <th class="p-4 text-right">Ücret / Tarife</th>
                         </tr>
                     </thead>
-                    <tbody id="fiyat-tablosu-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                    <tbody id="fiyat-tablosu-body" class="divide-y divide-slate-800 text-sm text-slate-300">
                         <!-- JS ile dolacak -->
                     </tbody>
                 </table>
@@ -203,13 +201,13 @@
         </main>
 
         <!-- 5. SEKMELER: PERSONEL YÖNETİMİ & PROFİL -->
-        <main id="profil-sec" class="flex-1 bg-slate-50 p-6 overflow-y-auto hidden">
+        <main id="profil-sec" class="flex-1 bg-slate-950 p-6 overflow-y-auto hidden">
             <div class="flex justify-between items-center mb-6">
                 <div>
-                    <h2 class="text-xl font-bold text-slate-800">Personel Hesapları & Profiller</h2>
-                    <p class="text-xs text-slate-500">Klinik personellerini yönetebilir, yeni hesap ekleyebilir veya silebilirsiniz.</p>
+                    <h2 class="text-xl font-bold text-slate-100">Personel Hesapları & Profiller</h2>
+                    <p class="text-xs text-slate-400">Klinik personellerini yönetebilir, yeni hesap ekleyebilir veya silebilirsiniz.</p>
                 </div>
-                <button onclick="openModal('personel-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
+                <button onclick="openModal('personel-modal')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
                     <i class="fa-solid fa-user-plus text-xs"></i> Yeni Personel Ekle
                 </button>
             </div>
@@ -222,20 +220,22 @@
     </div>
 
     <!-- MODAL 1: RANDEVU OLUŞTURMA -->
-    <div id="randevu-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 border border-slate-200">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-lg text-slate-800">Randevu Oluştur</h3>
-                <button onclick="closeModal('randevu-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <div id="randevu-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-slate-900 rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-800 text-slate-200">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <h3 class="font-semibold text-lg text-slate-100">Randevu Oluştur</h3>
+                <button onclick="closeModal('randevu-modal')" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form onsubmit="randevuKaydet(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Hasta Adı Soyadı</label>
-                    <input type="text" id="modal-hasta" required placeholder="Örn: Ahmet Yılmaz" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Hasta Seçimi</label>
+                    <select id="modal-hasta-select" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <!-- Kayıtlı hastalar JS ile buraya yüklenecek -->
+                    </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Gün Seçimi</label>
-                    <select id="modal-gun" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Gün Seçimi</label>
+                    <select id="modal-gun" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="0">Pazartesi</option>
                         <option value="1">Salı</option>
                         <option value="2">Çarşamba</option>
@@ -247,81 +247,126 @@
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Saat</label>
-                        <select id="modal-saat" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Saat</label>
+                        <select id="modal-saat" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Yapılacak İşlem</label>
-                        <input type="text" id="modal-islem" placeholder="Muayene / Dolgu vs." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Yapılacak İşlem</label>
+                        <input type="text" id="modal-islem" placeholder="Muayene / Dolgu vs." class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
-                <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" onclick="closeModal('randevu-modal')" class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">İptal</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm">Kaydet</button>
+                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeModal('randevu-modal')" class="px-4 py-2 border border-slate-800 rounded-lg text-sm text-slate-400 hover:bg-slate-800">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-500 shadow-sm">Kaydet</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- MODAL 2: HASTA KAYDI / LOG EKLEME -->
-    <div id="hasta-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 border border-slate-200">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-lg text-slate-800">Yeni Hasta / Geliş Logu Kaydet</h3>
-                <button onclick="closeModal('hasta-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <div id="hasta-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-slate-900 rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-800 text-slate-200">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <h3 class="font-semibold text-lg text-slate-100">Yeni Hasta / Geliş Logu Kaydet</h3>
+                <button onclick="closeModal('hasta-modal')" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form onsubmit="hastaKaydet(event)" class="space-y-4">
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Dosya Numarası</label>
-                        <input type="text" id="hasta-dosyano" required placeholder="Örn: D-1001" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Dosya Numarası</label>
+                        <input type="text" id="hasta-dosyano" required placeholder="Örn: D-1001" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">TC Kimlik No</label>
-                        <input type="text" id="hasta-tc" maxlength="11" required placeholder="11 Haneli TC" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">TC Kimlik No</label>
+                        <input type="text" id="hasta-tc" maxlength="11" required placeholder="11 Haneli TC" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Hasta Adı Soyadı</label>
-                    <input type="text" id="hasta-adsoyad" required placeholder="Örn: Mehmet Demir" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Hasta Adı Soyadı</label>
+                    <input type="text" id="hasta-adsoyad" required placeholder="Örn: Mehmet Demir" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Telefon Numarası</label>
-                        <input type="tel" id="hasta-telefon" required placeholder="05XX XXX XX XX" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Telefon Numarası</label>
+                        <input type="tel" id="hasta-telefon" required placeholder="05XX XXX XX XX" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Doğum Tarihi</label>
-                        <input type="date" id="hasta-dogum" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Doğum Tarihi</label>
+                        <input type="date" id="hasta-dogum" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Geliş Sebebi / Log Notu</label>
-                    <textarea id="hasta-sebep" required rows="3" placeholder="Örn: Diş ağrısı şikayeti ile geldi." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Geliş Sebebi / Log Notu</label>
+                    <textarea id="hasta-sebep" required rows="3" placeholder="Örn: Diş ağrısı şikayeti ile geldi." class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
                 </div>
-                <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" onclick="closeModal('hasta-modal')" class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">İptal</button>
-                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 shadow-sm">Hasta Kaydet</button>
+                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeModal('hasta-modal')" class="px-4 py-2 border border-slate-800 rounded-lg text-sm text-slate-400 hover:bg-slate-800">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-500 shadow-sm">Hasta Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- YENİ MODAL: HASTA BİLGİLERİNİ DÜZENLEME PANELİ -->
+    <div id="hasta-duzenle-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-slate-900 rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-800 text-slate-200">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <h3 class="font-semibold text-lg text-slate-100"><i class="fa-solid fa-user-pen text-blue-400 mr-2"></i>Hasta Bilgilerini Güncelle</h3>
+                <button onclick="closeModal('hasta-duzenle-modal')" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="hastaGuncelle(event)" class="space-y-4">
+                <input type="hidden" id="edit-hasta-id">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Dosya Numarası</label>
+                        <input type="text" id="edit-hasta-dosyano" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">TC Kimlik No</label>
+                        <input type="text" id="edit-hasta-tc" maxlength="11" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Hasta Adı Soyadı</label>
+                    <input type="text" id="edit-hasta-adsoyad" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Telefon Numarası</label>
+                        <input type="tel" id="edit-hasta-telefon" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Doğum Tarihi</label>
+                        <input type="date" id="edit-hasta-dogum" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Geliş Sebebi / Log Notu</label>
+                    <textarea id="edit-hasta-sebep" required rows="3" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeModal('hasta-duzenle-modal')" class="px-4 py-2 border border-slate-800 rounded-lg text-sm text-slate-400 hover:bg-slate-800">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-500 shadow-sm">Değişiklikleri Kaydet</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- MODAL 3: PERSONEL / PROFİL EKLEME -->
-    <div id="personel-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 border border-slate-200">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-lg text-slate-800">Yeni Personel Hesabı Ekle</h3>
-                <button onclick="closeModal('personel-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <div id="personel-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-slate-900 rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-800 text-slate-200">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <h3 class="font-semibold text-lg text-slate-100">Yeni Personel Hesabı Ekle</h3>
+                <button onclick="closeModal('personel-modal')" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form onsubmit="personelKaydet(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Ad Soyad</label>
-                    <input type="text" id="personel-adsoyad" required placeholder="Örn: Dr. Ayşe Yılmaz" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Ad Soyad</label>
+                    <input type="text" id="personel-adsoyad" required placeholder="Örn: Dr. Ayşe Yılmaz" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Unvan / Rol</label>
-                    <select id="personel-unvan" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Unvan / Rol</label>
+                    <select id="personel-unvan" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="Diş Hekimi">Diş Hekimi</option>
                         <option value="Uzman Hekim">Uzman Hekim</option>
                         <option value="Klinik Asistanı">Klinik Asistanı</option>
@@ -329,82 +374,82 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">E-Posta Adresi</label>
-                    <input type="email" id="personel-eposta" required placeholder="ayse@bulvarclinic.com" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">E-Posta Adresi</label>
+                    <input type="email" id="personel-eposta" required placeholder="ayse@bulvarclinic.com" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Telefon</label>
-                    <input type="tel" id="personel-tel" required placeholder="05XX XXX XX XX" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Telefon</label>
+                    <input type="tel" id="personel-tel" required placeholder="05XX XXX XX XX" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-                <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" onclick="closeModal('personel-modal')" class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">İptal</button>
-                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm">Personel Oluştur</button>
+                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeModal('personel-modal')" class="px-4 py-2 border border-slate-800 rounded-lg text-sm text-slate-400 hover:bg-slate-800">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-500 shadow-sm">Personel Oluştur</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- MODAL 4: TAKSİT PLANI EKLEME -->
-    <div id="taksit-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 border border-slate-200">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-semibold text-lg text-slate-800">Taksitli Ödeme Planı Ekle</h3>
-                <button onclick="closeModal('taksit-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+    <div id="taksit-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-slate-900 rounded-xl shadow-2xl w-full max-w-md p-6 border border-slate-800 text-slate-200">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-3">
+                <h3 class="font-semibold text-lg text-slate-100">Taksitli Ödeme Planı Ekle</h3>
+                <button onclick="closeModal('taksit-modal')" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form onsubmit="taksitKaydet(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Hasta Adı Soyadı</label>
-                    <input type="text" id="taksit-hasta" required placeholder="Örn: Canan Kılıç" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Hasta Adı Soyadı</label>
+                    <input type="text" id="taksit-hasta" required placeholder="Örn: Canan Kılıç" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
-                    <label class="block text-xs font-medium text-slate-600 mb-1">Yapılan İşlem / Tedavi</label>
-                    <input type="text" id="taksit-islem" required placeholder="Örn: İmplant Tedavisi" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <label class="block text-xs font-medium text-slate-400 mb-1">Yapılan İşlem / Tedavi</label>
+                    <input type="text" id="taksit-islem" required placeholder="Örn: İmplant Tedavisi" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Toplam Ücret (₺)</label>
-                        <input type="number" id="taksit-toplam" required placeholder="12000" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Toplam Ücret (₺)</label>
+                        <input type="number" id="taksit-toplam" required placeholder="12000" class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Toplam Taksit Sayısı</label>
-                        <input type="number" id="taksit-sayi" min="1" max="36" value="4" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Toplam Taksit Sayısı</label>
+                        <input type="number" id="taksit-sayi" min="1" max="36" value="4" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">Başlangıç Ödenen (₺)</label>
-                        <input type="number" id="taksit-odenen-tutar" min="0" value="0" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">Başlangıç Ödenen (₺)</label>
+                        <input type="number" id="taksit-odenen-tutar" min="0" value="0" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                     <div>
-                        <label class="block text-xs font-medium text-slate-600 mb-1">İlk Taksit Tarihi</label>
-                        <input type="date" id="taksit-tarih" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <label class="block text-xs font-medium text-slate-400 mb-1">İlk Taksit Tarihi</label>
+                        <input type="date" id="taksit-tarih" required class="w-full border border-slate-800 rounded-lg px-3 py-2 text-sm bg-slate-950 text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     </div>
                 </div>
-                <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" onclick="closeModal('taksit-modal')" class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">İptal</button>
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 shadow-sm">Planı Kaydet</button>
+                <div class="flex justify-end gap-2 mt-6 pt-3 border-t border-slate-800">
+                    <button type="button" onclick="closeModal('taksit-modal')" class="px-4 py-2 border border-slate-800 rounded-lg text-sm text-slate-400 hover:bg-slate-800">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-500 shadow-sm">Planı Kaydet</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- MODAL 5: ÖZEL SİLME ONAY UYARI PANELİ -->
-    <div id="sil-onay-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 border border-slate-100 text-center relative animate-in fade-in zoom-in duration-200">
-            <div class="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
+    <div id="sil-onay-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm p-6 border border-slate-800 text-center relative animate-in fade-in zoom-in duration-200">
+            <div class="w-14 h-14 bg-red-950/80 border border-red-800 text-red-400 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
-            <h3 id="sil-modal-baslik" class="font-bold text-lg text-slate-800 mb-2">Kayıt Silinecek</h3>
-            <p id="sil-modal-metin" class="text-xs text-slate-500 mb-6 leading-relaxed">Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
+            <h3 id="sil-modal-baslik" class="font-bold text-lg text-slate-100 mb-2">Kayıt Silinecek</h3>
+            <p id="sil-modal-metin" class="text-xs text-slate-400 mb-6 leading-relaxed">Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
             <div class="flex gap-3 justify-center">
-                <button type="button" onclick="closeModal('sil-onay-modal')" class="w-full py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Vazgeç</button>
-                <button type="button" id="sil-modal-onay-btn" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold shadow-md shadow-red-200 transition">Evet, Sil</button>
+                <button type="button" onclick="closeModal('sil-onay-modal')" class="w-full py-2.5 border border-slate-800 rounded-xl text-sm font-medium text-slate-400 hover:bg-slate-800 transition">Vazgeç</button>
+                <button type="button" id="sil-modal-onay-btn" class="w-full py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-sm font-semibold shadow-md transition">Evet, Sil</button>
             </div>
         </div>
     </div>
 
     <!-- TOAST BİLDİRİMİ -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-lg text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-800 border border-slate-700 text-white px-4 py-2.5 rounded-lg shadow-2xl text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
         <i class="fa-solid fa-circle-check text-green-400"></i>
         <span id="toast-message">İşlem Başarılı</span>
     </div>
@@ -465,7 +510,7 @@
         ];
 
         let aktifPersonelId = localStorage.getItem('klinik_aktif_personel') || personeller[0].id;
-        let mevcutHaftaninTarihleri = []; // O anki haftanın YYYY-MM-DD formatında tarihleri
+        let mevcuthangigunTarihleri = []; 
         let silmeIslemCallback = null;
 
         const saatler = [];
@@ -477,7 +522,6 @@
 
         const gunIsimleri = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
 
-        // Yardımcı Fonksiyon: Date objesini 'YYYY-MM-DD' formatına çevirir
         function formatDateISO(d) {
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -498,6 +542,7 @@
             fiyatlariEkranaBas(fiyatListesi);
             personelleriEkranaBas();
             aktifPersoneliGuncelle();
+            randevuHastaSelectDoldur();
 
             document.getElementById('sil-modal-onay-btn').addEventListener('click', () => {
                 if (typeof silmeIslemCallback === 'function') {
@@ -508,6 +553,19 @@
             });
         });
 
+        // Randevu modalındaki Hasta Açılır Menüsünü Doldurur
+        function randevuHastaSelectDoldur() {
+            const select = document.getElementById('modal-hasta-select');
+            select.innerHTML = '';
+            if (hastalar.length === 0) {
+                select.innerHTML = `<option value="">Kayıtlı Hasta Bulunamadı (Önce Kaydediniz)</option>`;
+            } else {
+                hastalar.forEach(h => {
+                    select.innerHTML += `<option value="${h.adSoyad}">${h.adSoyad} (${h.dosyaNo})</option>`;
+                });
+            }
+        }
+
         function switchTab(tabId) {
             document.getElementById('takvim-sec').classList.add('hidden');
             document.getElementById('hastalar-sec').classList.add('hidden');
@@ -515,40 +573,40 @@
             document.getElementById('fiyat-sec').classList.add('hidden');
             document.getElementById('profil-sec').classList.add('hidden');
 
-            document.getElementById('btn-takvim').classList.replace('text-blue-600', 'text-slate-400');
-            document.getElementById('btn-takvim').classList.remove('bg-blue-50');
-            document.getElementById('btn-hastalar').classList.replace('text-blue-600', 'text-slate-400');
-            document.getElementById('btn-hastalar').classList.remove('bg-blue-50');
-            document.getElementById('btn-taksit').classList.replace('text-indigo-600', 'text-slate-400');
-            document.getElementById('btn-taksit').classList.remove('bg-indigo-50');
-            document.getElementById('btn-fiyat').classList.replace('text-amber-600', 'text-slate-400');
-            document.getElementById('btn-fiyat').classList.remove('bg-amber-50');
+            document.getElementById('btn-takvim').classList.replace('text-blue-400', 'text-slate-400');
+            document.getElementById('btn-takvim').classList.remove('bg-blue-950/50', 'border', 'border-blue-800/50');
+            document.getElementById('btn-hastalar').classList.replace('text-blue-400', 'text-slate-400');
+            document.getElementById('btn-hastalar').classList.remove('bg-blue-950/50', 'border', 'border-blue-800/50');
+            document.getElementById('btn-taksit').classList.replace('text-indigo-400', 'text-slate-400');
+            document.getElementById('btn-taksit').classList.remove('bg-indigo-950/50', 'border', 'border-indigo-800/50');
+            document.getElementById('btn-fiyat').classList.replace('text-amber-400', 'text-slate-400');
+            document.getElementById('btn-fiyat').classList.remove('bg-amber-950/50', 'border', 'border-amber-800/50');
             document.getElementById('btn-profil').classList.remove('ring-2', 'ring-blue-500');
 
             const headerBtns = document.getElementById('header-butonlar');
 
             if (tabId === 'takvim-sec') {
                 document.getElementById('takvim-sec').classList.remove('hidden');
-                document.getElementById('btn-takvim').classList.replace('text-slate-400', 'text-blue-600');
-                document.getElementById('btn-takvim').classList.add('bg-blue-50');
+                document.getElementById('btn-takvim').classList.replace('text-slate-400', 'text-blue-400');
+                document.getElementById('btn-takvim').classList.add('bg-blue-950/50', 'border', 'border-blue-800/50');
                 document.getElementById('hafta-kontrolleri').classList.remove('hidden');
                 headerBtns.classList.remove('hidden');
             } else if (tabId === 'hastalar-sec') {
                 document.getElementById('hastalar-sec').classList.remove('hidden');
-                document.getElementById('btn-hastalar').classList.replace('text-slate-400', 'text-blue-600');
-                document.getElementById('btn-hastalar').classList.add('bg-blue-50');
+                document.getElementById('btn-hastalar').classList.replace('text-slate-400', 'text-blue-400');
+                document.getElementById('btn-hastalar').classList.add('bg-blue-950/50', 'border', 'border-blue-800/50');
                 document.getElementById('hafta-kontrolleri').classList.add('hidden');
                 headerBtns.classList.add('hidden');
             } else if (tabId === 'taksit-sec') {
                 document.getElementById('taksit-sec').classList.remove('hidden');
-                document.getElementById('btn-taksit').classList.replace('text-slate-400', 'text-indigo-600');
-                document.getElementById('btn-taksit').classList.add('bg-indigo-50');
+                document.getElementById('btn-taksit').classList.replace('text-slate-400', 'text-indigo-400');
+                document.getElementById('btn-taksit').classList.add('bg-indigo-950/50', 'border', 'border-indigo-800/50');
                 document.getElementById('hafta-kontrolleri').classList.add('hidden');
                 headerBtns.classList.add('hidden');
             } else if (tabId === 'fiyat-sec') {
                 document.getElementById('fiyat-sec').classList.remove('hidden');
-                document.getElementById('btn-fiyat').classList.replace('text-slate-400', 'text-amber-600');
-                document.getElementById('btn-fiyat').classList.add('bg-amber-50');
+                document.getElementById('btn-fiyat').classList.replace('text-slate-400', 'text-amber-400');
+                document.getElementById('btn-fiyat').classList.add('bg-amber-950/50', 'border', 'border-amber-800/50');
                 document.getElementById('hafta-kontrolleri').classList.add('hidden');
                 headerBtns.classList.add('hidden');
             } else if (tabId === 'profil-sec') {
@@ -567,14 +625,14 @@
                 const row = document.createElement('div');
                 row.className = "grid grid-cols-8 min-h-[50px]";
                 
-                let rowHtml = `<div class="p-2 text-xs text-slate-400 text-center border-r border-slate-100 bg-slate-50 font-mono flex items-center justify-center">${saat}</div>`;
+                let rowHtml = `<div class="p-2 text-xs text-slate-500 text-center border-r border-slate-900 bg-slate-900 font-mono flex items-center justify-center">${saat}</div>`;
                 
                 for (let gun = 0; gun < 7; gun++) {
                     const cleanSaat = saat.replace(':', '');
                     rowHtml += `
                         <div id="cell-${gun}-${cleanSaat}" 
                              onclick="quickOpenModal(${gun}, '${saat}')" 
-                             class="p-1 border-r border-slate-100 hover:bg-blue-50/50 cursor-pointer transition flex flex-col justify-center">
+                             class="p-1 border-r border-slate-900 hover:bg-slate-900/60 cursor-pointer transition flex flex-col justify-center">
                         </div>
                     `;
                 }
@@ -593,17 +651,17 @@
             document.getElementById('hafta-etiket').innerText = 
                 `${pazartesi.getDate()} ${pazartesi.toLocaleString('tr-TR', { month: 'short' })} - ${pazar.getDate()} ${pazar.toLocaleString('tr-TR', { month: 'short' })}`;
 
-            mevcutHaftaninTarihleri = [];
+            mevcuthangigunTarihleri = [];
             for (let i = 0; i < 7; i++) {
                 const day = new Date(pazartesi);
                 day.setDate(pazartesi.getDate() + i);
                 
                 const isoStr = formatDateISO(day);
-                mevcutHaftaninTarihleri.push(isoStr);
+                mevcuthangigunTarihleri.push(isoStr);
 
                 document.getElementById(`gun-${i}`).innerHTML = `
                     <div class="text-xs font-normal text-slate-400">${gunIsimleri[i]}</div>
-                    <div class="text-sm font-bold text-slate-800">${day.getDate()}</div>
+                    <div class="text-sm font-bold text-slate-100">${day.getDate()}</div>
                 `;
             }
 
@@ -616,6 +674,7 @@
         }
 
         function openModal(id) {
+            if (id === 'randevu-modal') randevuHastaSelectDoldur();
             document.getElementById(id).classList.remove('hidden');
             document.getElementById(id).classList.add('flex');
         }
@@ -631,7 +690,6 @@
             document.getElementById(id).classList.add('hidden');
         }
 
-        // Genel Özel Silme Onay Paneli Gösterici
         function silmeOnayiIste(baslik, metin, onayCallback) {
             document.getElementById('sil-modal-baslik').innerText = baslik;
             document.getElementById('sil-modal-metin').innerText = metin;
@@ -641,13 +699,17 @@
 
         function randevuKaydet(e) {
             e.preventDefault();
-            const hasta = document.getElementById('modal-hasta').value;
+            const hasta = document.getElementById('modal-hasta-select').value;
+            if (!hasta) {
+                alert("Lütfen bir hasta seçiniz.");
+                return;
+            }
+
             const gunIndex = parseInt(document.getElementById('modal-gun').value);
             const saat = document.getElementById('modal-saat').value;
             const islem = document.getElementById('modal-islem').value || 'Muayene';
 
-            // Seçili haftanın ilgili gününe ait gerçek tarih (YYYY-MM-DD)
-            const tarih = mevcutHaftaninTarihleri[gunIndex];
+            const tarih = mevcuthangigunTarihleri[gunIndex];
 
             const yeniRandevu = { id: Date.now(), hasta, gun: gunIndex, saat, islem, tarih };
             randevular.push(yeniRandevu);
@@ -660,22 +722,20 @@
         }
 
         function randevulariEkranaBas() {
-            // Takvim hücrelerini temizle
             document.querySelectorAll('[id^="cell-"]').forEach(cell => cell.innerHTML = '');
 
             randevular.forEach(item => {
-                // Yalnızca şu an ekranda açık olan haftanın tarihlerine uyan randevuları bas
-                if (item.tarih && mevcutHaftaninTarihleri.includes(item.tarih)) {
-                    const gunIndex = mevcutHaftaninTarihleri.indexOf(item.tarih);
+                if (item.tarih && mevcuthangigunTarihleri.includes(item.tarih)) {
+                    const gunIndex = mevcuthangigunTarihleri.indexOf(item.tarih);
                     const cleanSaat = item.saat.replace(':', '');
                     const targetCell = document.getElementById(`cell-${gunIndex}-${cleanSaat}`);
                     
                     if (targetCell) {
                         targetCell.innerHTML = `
-                            <div class="bg-blue-100 border-l-4 border-blue-600 p-1.5 rounded text-xs shadow-xs relative group">
-                                <div class="font-bold text-blue-900 truncate">${item.hasta}</div>
-                                <div class="text-[10px] text-blue-700 truncate">${item.islem}</div>
-                                <button onclick="randevuSil(event, ${item.id})" class="absolute top-1 right-1 hidden group-hover:block text-red-500 hover:text-red-700 text-[10px]" title="Randevu Sil">
+                            <div class="bg-blue-950/80 border-l-4 border-blue-500 p-1.5 rounded text-xs shadow-md relative group">
+                                <div class="font-bold text-blue-200 truncate">${item.hasta}</div>
+                                <div class="text-[10px] text-blue-400 truncate">${item.islem}</div>
+                                <button onclick="randevuSil(event, ${item.id})" class="absolute top-1 right-1 hidden group-hover:block text-red-400 hover:text-red-300 text-[10px]" title="Randevu Sil">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </div>
@@ -725,6 +785,7 @@
             localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
 
             hastaAramaYap();
+            randevuHastaSelectDoldur();
             closeModal('hasta-modal');
             showToast(`${adSoyad} hasta kaydı oluşturuldu.`);
             e.target.reset();
@@ -737,30 +798,70 @@
             const listeVerisi = liste || hastalar;
 
             if (listeVerisi.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Kayıtlı hasta bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">Kayıtlı hasta bulunamadı.</td></tr>`;
                 return;
             }
 
             listeVerisi.forEach(h => {
                 const yas = yasHesapla(h.dogumTarihi);
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-4 font-mono text-xs font-semibold text-blue-600">${h.dosyaNo}</td>
-                        <td class="p-4 font-mono text-xs text-slate-600">${h.tcNo || '-'}</td>
-                        <td class="p-4 font-semibold text-slate-800">
+                    <tr onclick="hastaDuzenleAc(${h.id})" class="hover:bg-slate-800/60 border-b border-slate-800/80 cursor-pointer transition">
+                        <td class="p-4 font-mono text-xs font-semibold text-blue-400">${h.dosyaNo}</td>
+                        <td class="p-4 font-mono text-xs text-slate-400">${h.tcNo || '-'}</td>
+                        <td class="p-4 font-semibold text-slate-100">
                             ${h.adSoyad} 
-                            ${yas !== '' ? `<span class="bg-slate-100 text-slate-600 text-[11px] font-normal px-2 py-0.5 rounded-full ml-1">${yas} yaş</span>` : ''}
+                            ${yas !== '' ? `<span class="bg-slate-800 text-slate-300 text-[11px] font-normal px-2 py-0.5 rounded-full ml-1">${yas} yaş</span>` : ''}
                         </td>
-                        <td class="p-4 text-slate-600">${h.telefon}</td>
-                        <td class="p-4 text-slate-600 text-xs max-w-xs">${h.sebep}</td>
-                        <td class="p-4 text-center">
-                            <button onclick="hastaSil(${h.id})" class="text-red-500 hover:text-red-700 p-1" title="Hasta Kaydını Sil">
+                        <td class="p-4 text-slate-300">${h.telefon}</td>
+                        <td class="p-4 text-slate-400 text-xs max-w-xs truncate">${h.sebep}</td>
+                        <td class="p-4 text-center space-x-2" onclick="event.stopPropagation()">
+                            <button onclick="hastaDuzenleAc(${h.id})" class="text-blue-400 hover:text-blue-300 p-1" title="Düzenle">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                            <button onclick="hastaSil(${h.id})" class="text-red-400 hover:text-red-300 p-1" title="Hasta Kaydını Sil">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </td>
                     </tr>
                 `;
             });
+        }
+
+        /* --- HASTA DÜZENLEME PANELİ --- */
+        function hastaDuzenleAc(id) {
+            const hasta = hastalar.find(h => h.id === id);
+            if (!hasta) return;
+
+            document.getElementById('edit-hasta-id').value = hasta.id;
+            document.getElementById('edit-hasta-dosyano').value = hasta.dosyaNo || '';
+            document.getElementById('edit-hasta-tc').value = hasta.tcNo || '';
+            document.getElementById('edit-hasta-adsoyad').value = hasta.adSoyad || '';
+            document.getElementById('edit-hasta-telefon').value = hasta.telefon || '';
+            document.getElementById('edit-hasta-dogum').value = hasta.dogumTarihi || '';
+            document.getElementById('edit-hasta-sebep').value = hasta.sebep || '';
+
+            openModal('hasta-duzenle-modal');
+        }
+
+        function hastaGuncelle(e) {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('edit-hasta-id').value);
+            const hastaIndex = hastalar.findIndex(h => h.id === id);
+
+            if (hastaIndex !== -1) {
+                hastalar[hastaIndex].dosyaNo = document.getElementById('edit-hasta-dosyano').value;
+                hastalar[hastaIndex].tcNo = document.getElementById('edit-hasta-tc').value;
+                hastalar[hastaIndex].adSoyad = document.getElementById('edit-hasta-adsoyad').value;
+                hastalar[hastaIndex].telefon = document.getElementById('edit-hasta-telefon').value;
+                hastalar[hastaIndex].dogumTarihi = document.getElementById('edit-hasta-dogum').value;
+                hastalar[hastaIndex].sebep = document.getElementById('edit-hasta-sebep').value;
+
+                localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
+                hastaAramaYap();
+                randevuHastaSelectDoldur();
+                closeModal('hasta-duzenle-modal');
+                showToast('Hasta bilgileri başarıyla güncellendi.');
+            }
         }
 
         function hastaAramaYap() {
@@ -782,6 +883,7 @@
                     hastalar = hastalar.filter(h => h.id !== id);
                     localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
                     hastaAramaYap();
+                    randevuHastaSelectDoldur();
                     showToast('Hasta kaydı silindi.');
                 }
             );
@@ -813,7 +915,7 @@
             let gecikmeVarMi = false;
 
             if (taksitler.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-400">Henüz taksitli ödeme kaydı bulunmuyor.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="8" class="p-6 text-center text-slate-500">Henüz taksitli ödeme kaydı bulunmuyor.</td></tr>`;
                 document.getElementById('taksit-bildirim-rozet').classList.add('hidden');
                 return;
             }
@@ -840,30 +942,30 @@
                 if (gecikmis) gecikmeVarMi = true;
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100">
-                        <td class="p-4 font-semibold text-slate-800">${t.hasta}</td>
-                        <td class="p-4 text-slate-600 text-xs">${t.islem}</td>
-                        <td class="p-4 font-mono font-medium text-slate-700">${t.toplam.toLocaleString('tr-TR')} ₺</td>
-                        <td class="p-4 font-mono text-emerald-600 font-medium">${t.odenenTutar.toLocaleString('tr-TR')} ₺</td>
-                        <td class="p-4 font-mono font-bold ${kalanBorc > 0 ? 'text-slate-800' : 'text-emerald-600'}">${kalanBorc.toLocaleString('tr-TR')} ₺</td>
-                        <td class="p-4 text-xs text-slate-600">
-                            <span class="font-bold text-slate-800">${odenenTaksitSayisi}</span> / ${t.taksitSayisi} Ödendi 
-                            <span class="text-slate-400">(${kalanTaksitSayisi} kalan)</span>
+                    <tr class="hover:bg-slate-800/60 border-b border-slate-800/80">
+                        <td class="p-4 font-semibold text-slate-100">${t.hasta}</td>
+                        <td class="p-4 text-slate-400 text-xs">${t.islem}</td>
+                        <td class="p-4 font-mono font-medium text-slate-300">${t.toplam.toLocaleString('tr-TR')} ₺</td>
+                        <td class="p-4 font-mono text-emerald-400 font-medium">${t.odenenTutar.toLocaleString('tr-TR')} ₺</td>
+                        <td class="p-4 font-mono font-bold ${kalanBorc > 0 ? 'text-slate-100' : 'text-emerald-400'}">${kalanBorc.toLocaleString('tr-TR')} ₺</td>
+                        <td class="p-4 text-xs text-slate-300">
+                            <span class="font-bold text-slate-100">${odenenTaksitSayisi}</span> / ${t.taksitSayisi} Ödendi 
+                            <span class="text-slate-500">(${kalanTaksitSayisi} kalan)</span>
                         </td>
                         <td class="p-4 text-xs">
                             ${kalanBorc === 0 ? 
-                                `<span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-md font-medium"><i class="fa-solid fa-check"></i> Tamamlandı</span>` : 
+                                `<span class="bg-emerald-950 border border-emerald-800 text-emerald-300 px-2 py-1 rounded-md font-medium"><i class="fa-solid fa-check"></i> Tamamlandı</span>` : 
                                 (gecikmis ? 
-                                    `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-md font-semibold animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i> Gecikmiş Ödeme!</span>` : 
-                                    `<span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium">Düzenli Ödeniyor</span>`
+                                    `<span class="bg-red-950 border border-red-800 text-red-300 px-2 py-1 rounded-md font-semibold animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i> Gecikmiş Ödeme!</span>` : 
+                                    `<span class="bg-blue-950 border border-blue-800 text-blue-300 px-2 py-1 rounded-md font-medium">Düzenli Ödeniyor</span>`
                                 )
                             }
                         </td>
                         <td class="p-4 text-center space-x-1">
                             ${kalanBorc > 0 ? 
-                                `<button onclick="taksitOdemeAl(${t.id})" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded text-xs font-semibold transition" title="Ödeme Al">+ Ödeme Al</button>` : ''
+                                `<button onclick="taksitOdemeAl(${t.id})" class="bg-emerald-950 hover:bg-emerald-900 border border-emerald-800 text-emerald-300 px-2.5 py-1 rounded text-xs font-semibold transition" title="Ödeme Al">+ Ödeme Al</button>` : ''
                             }
-                            <button onclick="taksitSil(${t.id})" class="text-red-500 hover:text-red-700 p-1" title="Planı Sil">
+                            <button onclick="taksitSil(${t.id})" class="text-red-400 hover:text-red-300 p-1" title="Planı Sil">
                                 <i class="fa-solid fa-trash"></i>
                             </button>
                         </td>
@@ -921,15 +1023,15 @@
             tbody.innerHTML = '';
 
             if (liste.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="2" class="p-6 text-center text-slate-400">Aramanıza uygun işlem bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="2" class="p-6 text-center text-slate-500">Aramanıza uygun işlem bulunamadı.</td></tr>`;
                 return;
             }
 
             liste.forEach(item => {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 border-b border-slate-100 transition">
-                        <td class="p-4 font-semibold text-slate-800">${item.islem}</td>
-                        <td class="p-4 text-right font-mono font-bold text-amber-700">${item.ucret}</td>
+                    <tr class="hover:bg-slate-800/60 border-b border-slate-800/80 transition">
+                        <td class="p-4 font-semibold text-slate-200">${item.islem}</td>
+                        <td class="p-4 text-right font-mono font-bold text-amber-400">${item.ucret}</td>
                     </tr>
                 `;
             });
@@ -967,29 +1069,29 @@
             personeller.forEach(p => {
                 const isAktif = p.id == aktifPersonelId;
                 container.innerHTML += `
-                    <div class="bg-white p-5 rounded-xl border ${isAktif ? 'border-blue-500 ring-2 ring-blue-100' : 'border-slate-200'} shadow-sm relative flex flex-col justify-between">
+                    <div class="bg-slate-900 p-5 rounded-xl border ${isAktif ? 'border-blue-500 ring-2 ring-blue-900/40' : 'border-slate-800'} shadow-md relative flex flex-col justify-between">
                         <div>
                             <div class="flex items-center justify-between mb-4">
                                 <div class="flex items-center gap-4">
-                                    <img src="${p.avatar}" alt="${p.adSoyad}" class="w-14 h-14 rounded-full object-cover border border-slate-200">
+                                    <img src="${p.avatar}" alt="${p.adSoyad}" class="w-14 h-14 rounded-full object-cover border border-slate-700">
                                     <div>
-                                        <h3 class="font-bold text-slate-800 text-base">${p.adSoyad}</h3>
-                                        <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded font-medium">${p.unvan}</span>
+                                        <h3 class="font-bold text-slate-100 text-base">${p.adSoyad}</h3>
+                                        <span class="bg-blue-950 text-blue-300 border border-blue-800 text-xs px-2 py-0.5 rounded font-medium">${p.unvan}</span>
                                     </div>
                                 </div>
                                 ${!isAktif && personeller.length > 1 ? 
-                                    `<button onclick="personelSil(${p.id})" class="text-slate-300 hover:text-red-500 transition p-1" title="Hesabı Sil"><i class="fa-solid fa-trash"></i></button>` : ''
+                                    `<button onclick="personelSil(${p.id})" class="text-slate-500 hover:text-red-400 transition p-1" title="Hesabı Sil"><i class="fa-solid fa-trash"></i></button>` : ''
                                 }
                             </div>
-                            <div class="space-y-1.5 text-xs text-slate-600 mb-4">
-                                <p><i class="fa-regular fa-envelope w-4"></i> ${p.eposta}</p>
-                                <p><i class="fa-solid fa-phone w-4"></i> ${p.tel}</p>
+                            <div class="space-y-1.5 text-xs text-slate-400 mb-4">
+                                <p><i class="fa-regular fa-envelope w-4 text-slate-500"></i> ${p.eposta}</p>
+                                <p><i class="fa-solid fa-phone w-4 text-slate-500"></i> ${p.tel}</p>
                             </div>
                         </div>
-                        <div class="flex gap-2 pt-3 border-t border-slate-100">
+                        <div class="flex gap-2 pt-3 border-t border-slate-800">
                             ${isAktif ? 
-                                `<button class="w-full py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg cursor-default flex items-center justify-center gap-1"><i class="fa-solid fa-circle-check"></i> Aktif Kullanıcı</button>` : 
-                                `<button onclick="personelSec(${p.id})" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition">Bu Hesaba Geç</button>`
+                                `<button class="w-full py-1.5 bg-green-950/60 border border-green-800 text-green-300 text-xs font-semibold rounded-lg cursor-default flex items-center justify-center gap-1"><i class="fa-solid fa-circle-check"></i> Aktif Kullanıcı</button>` : 
+                                `<button onclick="personelSec(${p.id})" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium rounded-lg transition">Bu Hesaba Geç</button>`
                             }
                         </div>
                     </div>
