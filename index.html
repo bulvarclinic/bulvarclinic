@@ -1,1 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diş Kliniği Yönetim Paneli</title>
+    <!-- Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for rich icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-[#f3f6f9] text-slate-800 antialiased selection:bg-blue-500 selection:text-white">
 
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- 1. Sol Koyu Yan Menü -->
+        <aside class="w-20 bg-[#1e293b] flex flex-col items-center justify-between py-6 z-20 shrink-0 border-r border-slate-800">
+            <div class="flex flex-col items-center gap-6 w-full">
+                <!-- Logo -->
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 cursor-pointer hover:scale-105 transition-transform">
+                    <i class="fa-solid fa-tooth text-xl"></i>
+                </div>
+
+                <div class="w-10 h-[1px] bg-slate-700/60"></div>
+
+                <!-- Navigasyon İkonları -->
+                <nav class="flex flex-col gap-3 w-full px-3">
+                    <a href="#" class="flex items-center justify-center w-full h-12 rounded-xl bg-blue-600 text-white shadow-md shadow-blue-600/30 transition-all" title="Kontrol Paneli">
+                        <i class="fa-solid fa-house text-lg"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-center w-full h-12 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all" title="Hastalar">
+                        <i class="fa-solid fa-users text-lg"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-center w-full h-12 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all" title="Takvim">
+                        <i class="fa-regular fa-calendar-days text-lg"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-center w-full h-12 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all" title="Tedaviler">
+                        <i class="fa-solid fa-cube text-lg"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-center w-full h-12 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all" title="Görevler">
+                        <i class="fa-solid fa-clipboard-list text-lg"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-center w-full h-12 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all" title="Analizler">
+                        <i class="fa-solid fa-chart-line text-lg"></i>
+                    </a>
+                    <a href="#" class="flex items-center justify-center w-full h-12 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all" title="Aktivite">
+                        <i class="fa-solid fa-clock-rotate-left text-lg"></i>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Alt Araçlar ve Kullanıcı Profili -->
+            <div class="flex flex-col items-center gap-4 w-full px-3">
+                <a href="#" class="flex items-center justify-center w-11 h-11 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all relative">
+                    <i class="fa-regular fa-bell text-lg"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500"></span>
+                </a>
+                <a href="#" class="flex items-center justify-center w-11 h-11 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </a>
+                <a href="#" class="flex items-center justify-center w-11 h-11 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-all">
+                    <i class="fa-solid fa-gear text-lg"></i>
+                </a>
+
+                <div class="w-10 h-[1px] bg-slate-700/60"></div>
+
+                <div class="relative group cursor-pointer">
+                    <div class="w-11 h-11 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center ring-2 ring-blue-500/50 text-sm">YD</div>
+                    <div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-slate-900"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Ana Çalışma Alanı -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- Üst Karşılama ve Navigasyon Çubuğu -->
+            <header class="h-20 bg-white border-b border-slate-200/80 px-8 flex items-center justify-between shrink-0 shadow-sm">
+                <!-- Karşılama Alanı -->
+                <div class="flex items-center gap-3">
+                    <h1 class="text-2xl font-bold tracking-tight text-slate-900">Hoş Geldiniz, <span class="text-blue-600">Yönetici</span> <span class="inline-block animate-bounce">👋</span></h1>
+                </div>
+
+                <!-- Tarih ve Görünüm Kontrolleri -->
+                <div class="flex items-center gap-4">
+                    <!-- Tarih Seçici Widget -->
+                    <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl shadow-sm">
+                        <i class="fa-regular fa-calendar text-blue-600 text-lg"></i>
+                        <div class="flex flex-col">
+                            <span class="text-xs font-semibold text-slate-800">3 Aralık 2024</span>
+                            <span class="text-[10px] text-slate-500 font-medium">Salı</span>
+                        </div>
+                        <div class="flex items-center gap-1.5 ml-2 bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-semibold">
+                            <i class="fa-regular fa-eye"></i> Aktif
+                        </div>
+                    </div>
+
+                    <!-- Arama Çubuğu -->
+                    <div class="relative hidden lg:block w-56">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-sm"></i>
+                        <input type="text" placeholder="Hasta veya randevu ara..." class="w-full bg-slate-50 border border-slate-200 text-sm rounded-xl pl-10 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all">
+                    </div>
+
+                    <!-- Aksiyon Düğmeleri -->
+                    <button class="w-10 h-10 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-100 transition-colors shadow-sm" title="Dışa Aktar">
+                        <i class="fa-solid fa-arrow-up-from-bracket text-sm"></i>
+                    </button>
+                    
+                    <!-- Görünüm Sekmeleri (Day, Week, Month) -->
+                    <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                        <button class="px-4 py-1.5 rounded-lg bg-blue-600 text-white text-xs font-semibold shadow-sm transition-all">Gün</button>
+                        <button class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 text-xs font-semibold transition-all">Hafta</button>
+                        <button class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 text-xs font-semibold transition-all">Ay</button>
+                        <button class="px-4 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 text-xs font-semibold transition-all">Planlayıcı</button>
+                    </div>
+                </div>
+
+                <!-- Marka Rozeti -->
+                <div class="hidden xl:flex items-center gap-2 bg-blue-600 text-white px-3.5 py-1.5 rounded-xl shadow-md shadow-blue-500/20">
+                    <i class="fa-solid fa-tooth text-sm"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider">Klinik Panel</span>
+                </div>
+            </header>
+
+            <!-- Ana İçerik Izgarası -->
+            <div class="flex-1 flex overflow-hidden p-6 gap-6">
+
+                <!-- 2. Merkezi İnteraktif Randevu Takvim Izgarası -->
+                <div class="flex-1 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex flex-col overflow-hidden">
+                    
+                    <!-- Doktor Sütun Başlıkları (Boş / Nötr Şablon) -->
+                    <div class="grid grid-cols-4 border-b border-slate-200 bg-slate-50/70 text-center text-xs font-bold text-slate-700 py-3 shrink-0">
+                        <div class="border-r border-slate-200 text-slate-400 font-semibold">Saat</div>
+                        <div class="border-r border-slate-200 flex items-center justify-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> [Doktor 1]
+                        </div>
+                        <div class="border-r border-slate-200 flex items-center justify-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> [Doktor 2]
+                        </div>
+                        <div class="flex items-center justify-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> [Doktor 3]
+                        </div>
+                    </div>
+
+                    <!-- Kaydırılabilir Saat Dilimleri Izgarası -->
+                    <div class="flex-1 overflow-y-auto divide-y divide-slate-100 relative select-none">
+                        
+                        <!-- 09:00 Dilimi -->
+                        <div class="grid grid-cols-4 min-h-[90px] relative group hover:bg-slate-50/50 transition-colors">
+                            <div class="p-3 text-xs font-medium text-slate-400 border-r border-slate-100 flex items-start justify-center pt-4">09:00</div>
+                            <div class="p-1.5 border-r border-slate-100 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 1', '09:15 - 09:45', 'Doktor 1', 'Genel Muayene', 'Onaylandı')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-emerald-600/90 hover:bg-emerald-600 text-white p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 1]</div>
+                                    <div class="text-[10px] text-emerald-100 font-medium">09:15 - 09:45</div>
+                                </div>
+                            </div>
+                            <div class="p-1.5 border-r border-slate-100 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 2', '08:30 - 09:30', 'Doktor 2', 'Kanal Tedavisi', 'Devam Ediyor')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-rose-800/90 hover:bg-rose-800 text-white p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 2]</div>
+                                    <div class="text-[10px] text-rose-100 font-medium">08:30 - 09:30</div>
+                                </div>
+                            </div>
+                            <div class="p-1.5 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 3', '09:00 - 11:00', 'Doktor 3', 'Ortodonti Konsültasyon', 'Onaylandı')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-rose-900/90 hover:bg-rose-900 text-white p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 3]</div>
+                                    <div class="text-[10px] text-rose-100 font-medium">09:00 - 11:00</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 09:30 Dilimi -->
+                        <div class="grid grid-cols-4 min-h-[90px] relative group hover:bg-slate-50/50 transition-colors">
+                            <div class="p-3 text-xs font-medium text-slate-400 border-r border-slate-100 flex items-start justify-center pt-4">09:30</div>
+                            <div class="p-1.5 border-r border-slate-100 relative"></div>
+                            <div class="p-1.5 border-r border-slate-100 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 4', '09:30 - 10:15', 'Doktor 2', 'Diş Çekimi', 'Onaylandı')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-sky-300 hover:bg-sky-400 text-slate-900 p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 4]</div>
+                                    <div class="text-[10px] text-slate-700 font-medium">09:30 - 10:15</div>
+                                </div>
+                            </div>
+                            <div class="p-1.5 relative"></div>
+                        </div>
+
+                        <!-- 10:00 Dilimi -->
+                        <div class="grid grid-cols-4 min-h-[90px] relative group hover:bg-slate-50/50 transition-colors">
+                            <div class="p-3 text-xs font-medium text-slate-400 border-r border-slate-100 flex items-start justify-center pt-4">10:00</div>
+                            <div class="p-1.5 border-r border-slate-100 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 5', '09:50 - 10:35', 'Doktor 1', 'Diş Beyazlatma', 'Onaylandı')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-sky-200 hover:bg-sky-300 text-slate-900 p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 5]</div>
+                                    <div class="text-[10px] text-slate-700 font-medium">09:50 - 10:35</div>
+                                </div>
+                            </div>
+                            <div class="p-1.5 border-r border-slate-100 relative"></div>
+                            <div class="p-1.5 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 6', '09:45 - 10:30', 'Doktor 3', 'Kontrol', 'Onaylandı')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-sky-200 hover:bg-sky-300 text-slate-900 p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 6]</div>
+                                    <div class="text-[10px] text-slate-700 font-medium">09:45 - 10:30</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 10:30 Dilimi -->
+                        <div class="grid grid-cols-4 min-h-[90px] relative group hover:bg-slate-50/50 transition-colors">
+                            <div class="p-3 text-xs font-medium text-slate-400 border-r border-slate-100 flex items-start justify-center pt-4">10:30</div>
+                            <div class="p-1.5 border-r border-slate-100 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 7', '10:45 - 11:15', 'Doktor 1', 'Dolgu', 'Onaylandı')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-slate-600 hover:bg-slate-700 text-white p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 7]</div>
+                                    <div class="text-[10px] text-slate-200 font-medium">10:45 - 11:15</div>
+                                </div>
+                            </div>
+                            <div class="p-1.5 border-r border-slate-100 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 8', '10:30 - 11:00', 'Doktor 2', 'Konsültasyon', 'Onaylandı')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-slate-700 hover:bg-slate-800 text-white p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 8]</div>
+                                    <div class="text-[10px] text-slate-200 font-medium">10:30 - 11:00</div>
+                                </div>
+                            </div>
+                            <div class="p-1.5 relative"></div>
+                        </div>
+
+                        <!-- 11:00 Dilimi -->
+                        <div class="grid grid-cols-4 min-h-[90px] relative group hover:bg-slate-50/50 transition-colors">
+                            <div class="p-3 text-xs font-medium text-slate-400 border-r border-slate-100 flex items-start justify-center pt-4">11:00</div>
+                            <div class="p-1.5 border-r border-slate-100 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 9', '11:15 - 13:30', 'Doktor 1', 'İmplant Operasyonu', 'Devam Ediyor')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-rose-900/90 hover:bg-rose-900 text-white p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between z-10">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 9]</div>
+                                    <div class="text-[10px] text-rose-100 font-medium">11:15 - 13:30</div>
+                                </div>
+                            </div>
+                            <div class="p-1.5 border-r border-slate-100 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 10', '11:15 - 11:55', 'Doktor 2', 'Kuron Provası', 'Onaylandı')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-sky-200 hover:bg-sky-300 text-slate-900 p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 10]</div>
+                                    <div class="text-[10px] text-slate-700 font-medium">11:15 - 11:55</div>
+                                </div>
+                            </div>
+                            <div class="p-1.5 relative">
+                                <div onclick="openAppointmentModal('Hasta Adı 11', '11:30 - 12:15', 'Doktor 3', 'Periodontal Bakım', 'Onaylandı')" class="absolute inset-x-1.5 top-1.5 bottom-1.5 bg-emerald-700 hover:bg-emerald-800 text-white p-2.5 rounded-xl shadow-sm cursor-pointer transition-all hover:scale-[1.02] flex flex-col justify-between">
+                                    <div class="font-semibold text-xs tracking-tight">[Hasta Adı 11]</div>
+                                    <div class="text-[10px] text-emerald-100 font-medium">11:30 - 12:15</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- 3. Sağ Taraf Panel (Görevler ve Aktivite Akışı) -->
+                <div class="w-96 flex flex-col gap-6 shrink-0">
+                    
+                    <!-- Görevler Bölümü (Tasks) -->
+                    <div class="bg-white border border-slate-200/80 rounded-2xl shadow-sm p-5 flex flex-col">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-slate-900 text-sm">Görevler</h3>
+                                <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <button onclick="addNewTask()" class="text-xs font-semibold text-blue-600 hover:text-blue-700 transition-colors">Ekle</button>
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                                    <span>Aktif Görevler</span>
+                                    <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Görev Listesi -->
+                        <div id="taskList" class="flex flex-col gap-3">
+                            <div class="flex items-start justify-between gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                                <div class="flex items-start gap-3">
+                                    <input type="checkbox" class="mt-1 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-semibold text-slate-800">Klinik Gider Kontrolü</span>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <div class="w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center">Y</div>
+                                            <span class="text-[11px] text-slate-500">[Kullanıcı]</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="text-[11px] font-medium text-slate-400">13 Ara</span>
+                            </div>
+
+                            <div class="flex items-start justify-between gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                                <div class="flex items-start gap-3">
+                                    <input type="checkbox" class="mt-1 w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer">
+                                    <div class="flex flex-col">
+                                        <span class="text-xs font-semibold text-slate-800">Malzeme Siparişi Verilecek</span>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            <div class="w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-bold flex items-center justify-center">Y</div>
+                                            <span class="text-[11px] text-slate-500">[Kullanıcı]</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-1">
+                                    <span class="text-[11px] font-medium text-slate-400">10 Ara</span>
+                                    <span class="bg-slate-100 text-slate-700 text-[9px] font-bold px-1.5 py-0.5 rounded">Yönetim</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Aktivite Akışı Bölümü (Activity Stream) -->
+                    <div class="flex-1 bg-white border border-slate-200/80 rounded-2xl shadow-sm p-5 flex flex-col overflow-hidden">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-3 shrink-0">
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-bold text-slate-900 text-sm">Aktivite Akışı</h3>
+                                <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+                            </div>
+                        </div>
+
+                        <!-- Kaydırılabilir Akış -->
+                        <div class="flex-1 overflow-y-auto flex flex-col gap-4 pr-1">
+                            <div class="flex items-start gap-3 pb-3 border-b border-slate-100">
+                                <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                                    <i class="fa-regular fa-calendar-check text-sm"></i>
+                                </div>
+                                <div class="flex flex-col gap-1 w-full">
+                                    <div class="text-xs text-slate-700 leading-relaxed">
+                                        <span class="font-bold text-slate-900">[Hasta Adı]</span> randevusu güncellendi.
+                                    </div>
+                                    <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-100 flex flex-col gap-1 text-[11px] text-slate-600">
+                                        <div><span class="font-semibold text-slate-700">Doktor:</span> [Doktor 1]</div>
+                                        <div><span class="font-semibold text-slate-700">İşlem:</span> Muayene</div>
+                                        <div><span class="font-semibold text-slate-700">Durum:</span> Beklemede</div>
+                                    </div>
+                                    <div class="flex items-center justify-between pt-1">
+                                        <span class="text-[10px] text-slate-400">32 dakika önce</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Randevu Detay / Düzenleme Modalı -->
+    <div id="appointmentModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 text-white flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-tooth"></i>
+                    <h3 class="font-bold text-base">Randevu Detayları</h3>
+                </div>
+                <button onclick="closeAppointmentModal()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <div class="p-6 flex flex-col gap-4">
+                <div class="flex flex-col">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Hasta Bilgisi</span>
+                    <span id="modalPatientName" class="text-lg font-bold text-slate-900">-</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Saat Dilimi</span>
+                        <span id="modalTime" class="text-sm font-semibold text-slate-800">-</span>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">İlgili Hekim</span>
+                        <span id="modalDoctor" class="text-sm font-semibold text-slate-800">-</span>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Tedavi / İşlem</span>
+                    <span id="modalTreatment" class="text-sm font-semibold text-slate-800">-</span>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Durum</span>
+                    <span id="modalStatus" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold w-fit mt-1">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Aktif
+                    </span>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 flex items-center justify-end gap-3">
+                <button onclick="closeAppointmentModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 font-semibold text-sm transition-colors">Kapat</button>
+                <button onclick="simulateAction('Randevu güncellendi.')" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm transition-colors shadow-sm shadow-blue-500/20">Düzenle</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bildirim Toast Çubuğu -->
+    <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toastMessage" class="text-sm font-medium">İşlem başarıyla gerçekleştirildi.</span>
+    </div>
+
+    <script>
+        function openAppointmentModal(patient, time, doctor, treatment, status) {
+            document.getElementById('modalPatientName').innerText = patient;
+            document.getElementById('modalTime').innerText = time;
+            document.getElementById('modalDoctor').innerText = doctor;
+            document.getElementById('modalTreatment').innerText = treatment;
+            
+            const statusEl = document.getElementById('modalStatus');
+            statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ${status}`;
+            
+            document.getElementById('appointmentModal').classList.remove('hidden');
+        }
+
+        function closeAppointmentModal() {
+            document.getElementById('appointmentModal').classList.add('hidden');
+        }
+
+        function simulateAction(msg) {
+            closeAppointmentModal();
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function addNewTask() {
+            simulateAction('Yeni görev penceresi açıldı.');
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('appointmentModal');
+            if (event.target == modal) {
+                closeAppointmentModal();
+            }
+        }
+    </script>
+</body>
+</html>
