@@ -3,100 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Klinik Yönetim Sistemi</title>
+    <title>Klinik Yönetim Sistemi - Haftalık Takvim</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome İkon Kütüphanesi -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#f0f9ff',
-                            100: '#e0f2fe',
-                            500: '#0284c7',
-                            600: '#0369a1',
-                            700: '#075985',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 h-screen flex overflow-hidden">
 
-    <!-- Sol Menü (Sidebar) -->
-    <aside class="w-20 bg-white border-r border-slate-200 flex flex-col items-center py-4 justify-between z-20 shadow-sm">
+    <!-- Sol Menü -->
+    <aside class="w-16 bg-white border-r border-slate-200 flex flex-col items-center py-4 justify-between z-20 shadow-sm">
         <div class="flex flex-col items-center gap-6">
-            <!-- Logo -->
-            <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-xl shadow-md cursor-pointer hover:bg-blue-700 transition" title="Bulvar Clinic">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white text-lg shadow-md cursor-pointer">
                 <i class="fa-solid fa-tooth"></i>
             </div>
-            
-            <!-- Ana Menü Butonları -->
             <nav class="flex flex-col gap-3">
-                <button onclick="switchTab(this, 'takvim-tab')" class="nav-btn active-tab w-12 h-12 rounded-xl flex items-center justify-center text-blue-600 bg-blue-50 transition" title="Randevu Takvimi">
-                    <i class="fa-solid fa-calendar-days text-lg"></i>
-                </button>
-                <button onclick="switchTab(this, 'hastalar-tab')" class="nav-btn w-12 h-12 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition" title="Hasta Listesi">
-                    <i class="fa-solid fa-user-group text-lg"></i>
-                </button>
-                <button onclick="switchTab(this, 'finans-tab')" class="nav-btn w-12 h-12 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition" title="Kasa ve Finans">
-                    <i class="fa-solid fa-chart-pie text-lg"></i>
-                </button>
-                <button onclick="switchTab(this, 'gorevler-tab')" class="nav-btn w-12 h-12 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition" title="Görevler">
-                    <i class="fa-solid fa-square-check text-lg"></i>
-                </button>
+                <button class="w-10 h-10 rounded-xl flex items-center justify-center text-blue-600 bg-blue-50" title="Takvim"><i class="fa-solid fa-calendar-days"></i></button>
             </nav>
         </div>
-
-        <!-- Alt Araçlar -->
-        <div class="flex flex-col items-center gap-4">
-            <button onclick="showToast('Bildirimler güncel')" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition relative">
-                <i class="fa-regular fa-bell text-lg"></i>
-                <span class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
-            </button>
-            <button onclick="openModal('yeni-hasta-modal')" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 transition" title="Hızlı Hasta Ekle">
-                <i class="fa-solid fa-user-plus text-lg"></i>
-            </button>
-            <div class="w-10 h-10 rounded-full bg-slate-300 overflow-hidden cursor-pointer border border-slate-300" title="Profil">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Profil" class="w-full h-full object-cover">
-            </div>
+        <div class="w-9 h-9 rounded-full bg-slate-300 overflow-hidden border border-slate-300">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Profil" class="w-full h-full object-cover">
         </div>
     </aside>
 
-    <!-- Ana Ekran Alanı -->
+    <!-- Ana Alan -->
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         
-        <!-- Üst Bar (Header) -->
+        <!-- Üst Bar -->
         <header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 z-10 shadow-sm">
-            <div class="flex items-center gap-3">
-                <h1 class="text-xl font-semibold text-slate-800">Bulvar Clinic <span class="text-xs bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full font-semibold ml-2">Yönetim Paneli</span></h1>
+            <div class="flex items-center gap-4">
+                <h1 class="text-xl font-bold text-slate-800">Bulvar Clinic</h1>
+                
+                <!-- Hafta Değiştirme Butonları -->
+                <div class="flex items-center gap-2 bg-slate-100 p-1 rounded-lg border border-slate-200 text-sm">
+                    <button onclick="changeWeek(-1)" class="px-2.5 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 shadow-sm transition">
+                        <i class="fa-solid fa-chevron-left text-xs"></i> Önceki Hafta
+                    </button>
+                    <span id="hafta-etiket" class="px-3 font-semibold text-slate-700 text-xs"></span>
+                    <button onclick="changeWeek(1)" class="px-2.5 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 shadow-sm transition">
+                        Sonraki Hafta <i class="fa-solid fa-chevron-right text-xs"></i>
+                    </button>
+                </div>
             </div>
 
-            <div class="flex items-center gap-4">
-                <!-- Tarih Göstergesi -->
-                <div class="flex items-center bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 gap-2 text-sm text-slate-700">
-                    <i class="fa-regular fa-calendar text-slate-400"></i>
-                    <span id="bugun-tarih"></span>
-                </div>
-
-                <!-- Hızlı Arama -->
-                <div class="relative">
-                    <input type="text" id="arama-input" onkeyup="hizliArama()" placeholder="Hasta veya randevu ara..." class="bg-slate-50 border border-slate-200 text-sm rounded-lg pl-9 pr-4 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 w-56">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-slate-400 text-xs"></i>
-                </div>
-
-                <!-- Yeni Randevu Ekle Butonu -->
-                <button onclick="openModal('yeni-randevu-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-3.5 py-1.5 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
+            <div class="flex items-center gap-3">
+                <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
                     <i class="fa-solid fa-plus text-xs"></i> Randevu Ekle
                 </button>
+            </div>
+        </header>
 
-                <!-- Görünüm Kipleri -->
-                <div class="flex bg-slate-100 p-1 rounded-lg border border-slate-200 text-sm">
-                    <button onclick="changeView(this)" class="view-btn px-3 py-1 rounded-md bg-white font-medium shadow-sm">Gün</button>
-                    <button onclick="changeView(this)" class="view-btn px-3 py-1 rounded-md text-slate-600 hover:text-slate-800">Hafta</button>
-                    <button onclick="changeView(this)" class="view-btn px-3 py-1 rounded-md text-slate-600 hover:text-slate-80
+        <!-- Haftalık Takvim Alanı -->
+        <main class="flex-1 flex flex-col bg-white overflow-hidden">
+            <!-- Gün Başlıkları -->
+            <div class="grid grid-cols-8 border-b border-slate-200 bg-slate-50 text-center font-semibold text-sm text-slate-700 py-3 shadow-xs">
+                <div class="border-r border-slate-200 text-slate-400 font-normal">Saat</div>
+                <div class="border-r border-slate-200" id="gun-0">Pzt</div>
+                <div class="border-r border-slate-200" id="gun-1">Sal</div>
+                <div class="border-r border-slate-200" id="gun-2">Çar</div>
+                <div class="border-r border-slate-200" id="gun-3">Per</div>
+                <div class="border-r border-slate-200" id="gun-4">Cum</div>
+                <div class="border-r border-slate-200" id="gun-5">Cmt</div>
+                <div id="gun-6">Paz</div>
+            </div>
+
+            <!-- Saatler (08:00 - 19:00) -->
+            <div id="takvim-body" class="flex-1 overflow-y-auto divide-y divide-slate-100">
+                <!-- JavaScript ile dinamiğe bağlanır -->
+            </div>
+        </main>
+    </div>
+
+    <!-- RANDEVU OLUMŞTURMA MODAL (PENCERE) -->
+    <div id="randevu-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 border border-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-semibold text-lg text-slate-800">Randevu Oluştur</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="randevuKaydet(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Hasta Adı Soyadı</label>
+                    <input type="text" id="modal-hasta" required placeholder="Örn: Ahmet Yılmaz" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Gün Seçimi</label>
+                    <select id="modal-gun" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="0">Pazartesi</option>
+                        <option value="1">Salı</option>
+                        <option value="2">Çarşamba</option>
+                        <option value="3">Perşembe</option>
+                        <option value="4">Cuma</option>
+                        <option value="5">Cumartesi</option>
+                        <option value="6">Pazar</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Saat</label>
+                        <select id="modal-saat" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <!-- Saat seçenekleri JS ile dolacak -->
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Yapılacak İşlem</label>
+                        <input type="text" id="modal-islem" placeholder="Muayene / Dolgu vs." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST BİLDİRİMİ -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-lg text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-green-400"></i>
+        <span id="toast-message">Randevu başarıyla eklendi</span>
+    </div>
+
+    <script>
+        let mevcuthangigun = new Date();
+        
+        // 08:00 - 19:00 arası yarım saatlik periyotlar
+        const saatler = [];
+        for (let h = 8; h <= 19; h++) {
+            const hourStr = h < 10 ? '0' + h : h;
+            saatler.push(`${hourStr}:00`);
+            if (h !== 19) saatler.push(`${hourStr}:30`);
+        }
+
+        const gunIsimleri = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Modal içindeki saat seçeneklerini doldur
+            const saatSelect = document.getElementById('modal-saat');
+            saatler.forEach(s => {
+                saatSelect.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+
+            tabloyuOlustur();
+            haftayiGuncelle();
+        });
+
+        function tabloyuOlustur() {
+            const container = document.getElementById('takvim-body');
+            container.innerHTML = '';
+
+            saatler.forEach(saat => {
+                const row = document.createElement('div');
+                row.className = "grid grid-cols-8 min-h-[50px]";
+                
+                // Saat Sütunu
+                let rowHtml = `<div class="p-2 text-xs text-slate-400 text-center border-r border-slate-100 bg-slate-50 font-mono flex items-center justify-center">${saat}</div>`;
+                
+                // 7 Gün İçin Hücreler
+                for (let gun = 0; gun < 7; gun++) {
+                    const cleanSaat = saat.replace(':', '');
+                    rowHtml += `
+                        <div id="cell-${gun}-${cleanSaat}" 
+                             onclick="quickOpenModal(${gun}, '${saat}')" 
+                             class="p-1 border-r border-slate-100 hover:bg-blue-50/50 cursor-pointer transition flex flex-col justify-center">
+                        </div>
+                    `;
+                }
+                row.innerHTML = rowHtml;
+                container.appendChild(row);
+            });
+        }
+
+        // Haftayı ve Başlık Tarihlerini Güncelleme
+        function haftayiGuncelle() {
+            const curr = new Date(mevcuthangigun);
+            const first = curr.getDate() - curr.getDay() + (curr.getDay() === 0 ? -6 : 1); // Pazartesiyi bul
+
+            const pazartesi = new Date(curr.setDate(first));
+            const pazar = new Date(curr.setDate(first + 6));
+
+            document.getElementById('hafta-etiket').innerText = 
+                `${pazartesi.getDate()} ${pazartesi.toLocaleString('tr-TR', { month: 'short' })} - ${pazar.getDate()} ${pazar.toLocaleString('tr-TR', { month: 'short' })}`;
+
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(pazartesi);
+                day.setDate(pazartesi.getDate() + i);
+                document.getElementById(`gun-${i}`).innerHTML = `
+                    <div class="text-xs font-normal text-slate-400">${gunIsimleri[i]}</div>
+                    <div class="text-sm font-bold text-slate-800">${day.getDate()}</div>
+                `;
+            }
+        }
+
+        function changeWeek(direction) {
+            mevcuthangigun.setDate(mevcuthangigun.getDate() + (direction * 7));
+            haftayiGuncelle();
+        }
+
+        // Modal Açma / Kapama
+        function openModal() {
+            document.getElementById('randevu-modal').classList.remove('hidden');
+            document.getElementById('randevu-modal').classList.add('flex');
+        }
+
+        function quickOpenModal(gun, saat) {
+            document.getElementById('modal-gun').value = gun;
+            document.getElementById('modal-saat').value = saat;
+            openModal();
+        }
+
+        function closeModal() {
+            document.getElementById('randevu-modal').classList.remove('flex');
+            document.getElementById('randevu-modal').classList.add('hidden');
+        }
+
+        // Randevu Kaydetme İşlemi
+        function randevuKaydet(e) {
+            e.preventDefault();
+            const hasta = document.getElementById('modal-hasta').value;
+            const gun = document.getElementById('modal-gun').value;
+            const saat = document.getElementById('modal-saat').value;
+            const islem = document.getElementById('modal-islem').value || 'Muayene';
+
+            const cleanSaat = saat.replace(':', '');
+            const targetCell = document.getElementById(`cell-${gun}-${cleanSaat}`);
+
+            if (targetCell) {
+                targetCell.innerHTML = `
+                    <div class="bg-blue-100 border-l-4 border-blue-600 p-1.5 rounded text-xs shadow-xs">
+                        <div class="font-bold text-blue-900 truncate">${hasta}</div>
+                        <div class="text-[10px] text-blue-700 truncate">${islem}</div>
+                    </div>
+                `;
+            }
+
+            closeModal();
+            showToast(`${hasta} için randevu oluşturuldu.`);
+            e.target.reset();
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
