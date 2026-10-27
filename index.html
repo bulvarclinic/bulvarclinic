@@ -29,6 +29,10 @@
                     <i class="fa-solid fa-credit-card text-lg"></i>
                     <span id="taksit-bildirim-rozet" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
                 </button>
+                <!-- Yeni Eklenen Fiyat Listesi Butonu -->
+                <button onclick="switchTab('fiyat-sec')" id="btn-fiyat" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition" title="Fiyat Listesi">
+                    <i class="fa-solid fa-tags text-lg"></i>
+                </button>
             </nav>
         </div>
 
@@ -102,9 +106,16 @@
                     <h2 class="text-xl font-bold text-slate-800">Hasta Kayıtları ve Geliş Logları</h2>
                     <p class="text-xs text-slate-500">Kayıtlı hastaların dosya numaraları, TC No, telefon, yaş ve geliş sebeplerinin listesi</p>
                 </div>
-                <button onclick="openModal('hasta-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-plus text-xs"></i> Yeni Hasta Logu Ekle
-                </button>
+                <div class="flex items-center gap-3">
+                    <!-- Hasta Arama Girişi -->
+                    <div class="relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                        <input type="text" id="hasta-ara-input" onkeyup="hastaAramaYap()" placeholder="Hasta adı, TC veya Dosya No ara..." class="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-xs w-64">
+                    </div>
+                    <button onclick="openModal('hasta-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-plus text-xs"></i> Yeni Hasta Logu Ekle
+                    </button>
+                </div>
             </div>
 
             <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
@@ -159,7 +170,35 @@
             </div>
         </main>
 
-        <!-- 4. SEKMELER: PERSONEL YÖNETİMİ & PROFİL -->
+        <!-- 4. SEKMELER: FİYAT LİSTESİ -->
+        <main id="fiyat-sec" class="flex-1 bg-slate-50 p-6 overflow-y-auto hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Tedavi Fiyat Listesi</h2>
+                    <p class="text-xs text-slate-500">Güncel klinik işlem ücretleri ve tedavi kalemleri</p>
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="fiyat-ara-input" onkeyup="fiyatAramaYap()" placeholder="İşlem veya tedavi ara..." class="pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white shadow-xs">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden max-w-4xl mx-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase font-semibold">
+                            <th class="p-4">İşlem / Tedavi Adı</th>
+                            <th class="p-4 text-right">Ücret / Tarife</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fiyat-tablosu-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                        <!-- JS ile dolacak -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- 5. SEKMELER: PERSONEL YÖNETİMİ & PROFİL -->
         <main id="profil-sec" class="flex-1 bg-slate-50 p-6 overflow-y-auto hidden">
             <div class="flex justify-between items-center mb-6">
                 <div>
@@ -345,6 +384,21 @@
         </div>
     </div>
 
+    <!-- MODAL 5: ÖZEL SİLME ONAY UYARI PANELİ -->
+    <div id="sil-onay-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 border border-slate-100 text-center relative animate-in fade-in zoom-in duration-200">
+            <div class="w-14 h-14 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl shadow-inner">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h3 id="sil-modal-baslik" class="font-bold text-lg text-slate-800 mb-2">Kayıt Silinecek</h3>
+            <p id="sil-modal-metin" class="text-xs text-slate-500 mb-6 leading-relaxed">Bu kaydı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.</p>
+            <div class="flex gap-3 justify-center">
+                <button type="button" onclick="closeModal('sil-onay-modal')" class="w-full py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition">Vazgeç</button>
+                <button type="button" id="sil-modal-onay-btn" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-xl text-sm font-semibold shadow-md shadow-red-200 transition">Evet, Sil</button>
+            </div>
+        </div>
+    </div>
+
     <!-- TOAST BİLDİRİMİ -->
     <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-lg text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
         <i class="fa-solid fa-circle-check text-green-400"></i>
@@ -364,8 +418,51 @@
             { id: 2, adSoyad: "Dt. Zeynep Can", unvan: "Ortodontist", eposta: "zeynep@bulvarclinic.com", tel: "0532 000 0002", avatar: "https://images.unsplash.com/photo-1594824813566-88855ce78961?w=150" }
         ];
 
+        // Google Dokümandaki Görsellerden Alınan Tam Fiyat Listesi
+        const fiyatListesi = [
+            { islem: "KANAL", ucret: "8.000 TL" },
+            { islem: "DOLGU", ucret: "3.500 TL" },
+            { islem: "KUAFAJ", ucret: "4.000 TL" },
+            { islem: "ÇEKİM", ucret: "2.000 TL" },
+            { islem: "20 LİK ÇEKİM", ucret: "2.500 TL" },
+            { islem: "YARI GÖMÜLÜ", ucret: "3.500 TL" },
+            { islem: "TAM GÖMÜLÜ", ucret: "5.000 TL" },
+            { islem: "SÜT ÇEKİM", ucret: "1.500 TL" },
+            { islem: "DETERTRAJ", ucret: "2.500 TL" },
+            { islem: "KÜRETAJ", ucret: "SEANS BAŞI 2.500 TL" },
+            { islem: "POLİSAJ", ucret: "2.000 TL" },
+            { islem: "DET-POL", ucret: "3.500 TL" },
+            { islem: "FİBER POST", ucret: "2.000 TL" },
+            { islem: "BOTOKS", ucret: "15.000 TL" },
+            { islem: "SÜT KANAL", ucret: "6.500 TL" },
+            { islem: "ESTETİK DOLGU", ucret: "TEK DİŞ 4.000 TL" },
+            { islem: "YER TUTUCU - APEREY", ucret: "6.000 TL" },
+            { islem: "BEYAZLATMA", ucret: "8.000 TL" },
+            { islem: "AMPUTASYON", ucret: "7.500 TL" },
+            { islem: "GECE PLAĞI", ucret: "5.000 TL" },
+            { islem: "FLOR", ucret: "1.500 TL" },
+            { islem: "KANAL YENİLEME", ucret: "9.000 TL" },
+            { islem: "SİMANTASYON", ucret: "250 TL ÜYE BAŞI" },
+            { islem: "PORSELEN", ucret: "6.000 TL" },
+            { islem: "ZİRKONYUM", ucret: "8.000 TL" },
+            { islem: "LAMİNE", ucret: "25.000 TL" },
+            { islem: "KOMPOZİT LAMİNE", ucret: "8.000 TL" },
+            { islem: "E-MAX", ucret: "15.000 TL" },
+            { islem: "ABUTMENT", ucret: "700–1.000 TL (FİRMAYA BAĞLI)" },
+            { islem: "TOTAL ALT-ÜST", ucret: "50.000 TL" },
+            { islem: "TOTAL ALT VEYA ÜST (TEK)", ucret: "25.000 TL" },
+            { islem: "MEGAGEN", ucret: "15.000 TL" },
+            { islem: "TEL TEDAVİSİ", ucret: "70.000 - 80.000 TL" },
+            { islem: "ŞEFFAF PLAK TEDAVİSİ", ucret: "120.000 - 140.000 TL" },
+            { islem: "ORTODONTİK APEREY", ucret: "TEK ÇENE 25.000 ÇİFT ÇENE 40.000 TL" },
+            { islem: "RETAİNER", ucret: "TEK ÇENE 5.000 TL" },
+            { islem: "SX PLAK", ucret: "5.000 TL" },
+            { islem: "MULTİ ( TEK ÜYE )", ucret: "2.000 TL" }
+        ];
+
         let aktifPersonelId = localStorage.getItem('klinik_aktif_personel') || personeller[0].id;
         let mevcutHaftaninTarihleri = []; // O anki haftanın YYYY-MM-DD formatında tarihleri
+        let silmeIslemCallback = null;
 
         const saatler = [];
         for (let h = 8; h <= 19; h++) {
@@ -392,16 +489,26 @@
 
             tabloyuOlustur();
             haftayiGuncelle();
-            hastalariEkranaBas();
+            hastalariEkranaBas(hastalar);
             taksitleriEkranaBas();
+            fiyatlariEkranaBas(fiyatListesi);
             personelleriEkranaBas();
             aktifPersoneliGuncelle();
+
+            document.getElementById('sil-modal-onay-btn').addEventListener('click', () => {
+                if (typeof silmeIslemCallback === 'function') {
+                    silmeIslemCallback();
+                    silmeIslemCallback = null;
+                }
+                closeModal('sil-onay-modal');
+            });
         });
 
         function switchTab(tabId) {
             document.getElementById('takvim-sec').classList.add('hidden');
             document.getElementById('hastalar-sec').classList.add('hidden');
             document.getElementById('taksit-sec').classList.add('hidden');
+            document.getElementById('fiyat-sec').classList.add('hidden');
             document.getElementById('profil-sec').classList.add('hidden');
 
             document.getElementById('btn-takvim').classList.replace('text-blue-600', 'text-slate-400');
@@ -410,6 +517,8 @@
             document.getElementById('btn-hastalar').classList.remove('bg-blue-50');
             document.getElementById('btn-taksit').classList.replace('text-indigo-600', 'text-slate-400');
             document.getElementById('btn-taksit').classList.remove('bg-indigo-50');
+            document.getElementById('btn-fiyat').classList.replace('text-amber-600', 'text-slate-400');
+            document.getElementById('btn-fiyat').classList.remove('bg-amber-50');
             document.getElementById('btn-profil').classList.remove('ring-2', 'ring-blue-500');
 
             const headerBtns = document.getElementById('header-butonlar');
@@ -430,6 +539,12 @@
                 document.getElementById('taksit-sec').classList.remove('hidden');
                 document.getElementById('btn-taksit').classList.replace('text-slate-400', 'text-indigo-600');
                 document.getElementById('btn-taksit').classList.add('bg-indigo-50');
+                document.getElementById('hafta-kontrolleri').classList.add('hidden');
+                headerBtns.classList.add('hidden');
+            } else if (tabId === 'fiyat-sec') {
+                document.getElementById('fiyat-sec').classList.remove('hidden');
+                document.getElementById('btn-fiyat').classList.replace('text-slate-400', 'text-amber-600');
+                document.getElementById('btn-fiyat').classList.add('bg-amber-50');
                 document.getElementById('hafta-kontrolleri').classList.add('hidden');
                 headerBtns.classList.add('hidden');
             } else if (tabId === 'profil-sec') {
@@ -512,6 +627,14 @@
             document.getElementById(id).classList.add('hidden');
         }
 
+        // Genel Özel Silme Onay Paneli Gösterici
+        function silmeOnayiIste(baslik, metin, onayCallback) {
+            document.getElementById('sil-modal-baslik').innerText = baslik;
+            document.getElementById('sil-modal-metin').innerText = metin;
+            silmeIslemCallback = onayCallback;
+            openModal('sil-onay-modal');
+        }
+
         function randevuKaydet(e) {
             e.preventDefault();
             const hasta = document.getElementById('modal-hasta').value;
@@ -560,12 +683,16 @@
 
         function randevuSil(e, id) {
             e.stopPropagation();
-            if (confirm("Bu randevuyu silmek istediğinize emin misiniz?")) {
-                randevular = randevular.filter(r => r.id !== id);
-                localStorage.setItem('klinik_randevular', JSON.stringify(randevular));
-                randevulariEkranaBas();
-                showToast('Randevu silindi.');
-            }
+            silmeOnayiIste(
+                "Randevu Silinecek",
+                "Bu randevu kaydını silmek istediğinize emin misiniz?",
+                () => {
+                    randevular = randevular.filter(r => r.id !== id);
+                    localStorage.setItem('klinik_randevular', JSON.stringify(randevular));
+                    randevulariEkranaBas();
+                    showToast('Randevu silindi.');
+                }
+            );
         }
 
         function yasHesapla(dogumTarihiStr) {
@@ -593,22 +720,24 @@
             hastalar.push(yeniHasta);
             localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
 
-            hastalariEkranaBas();
+            hastaAramaYap();
             closeModal('hasta-modal');
             showToast(`${adSoyad} hasta kaydı oluşturuldu.`);
             e.target.reset();
         }
 
-        function hastalariEkranaBas() {
+        function hastalariEkranaBas(liste) {
             const tbody = document.getElementById('hasta-tablosu-body');
             tbody.innerHTML = '';
 
-            if (hastalar.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Henüz kayıtlı hasta bulunmuyor.</td></tr>`;
+            const listeVerisi = liste || hastalar;
+
+            if (listeVerisi.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Kayıtlı hasta bulunamadı.</td></tr>`;
                 return;
             }
 
-            hastalar.forEach(h => {
+            listeVerisi.forEach(h => {
                 const yas = yasHesapla(h.dogumTarihi);
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 border-b border-slate-100">
@@ -630,13 +759,28 @@
             });
         }
 
+        function hastaAramaYap() {
+            const inputVal = document.getElementById('hasta-ara-input').value;
+            const query = inputVal.toLocaleLowerCase('tr-TR');
+            const filtrelenmis = hastalar.filter(h => 
+                (h.adSoyad && h.adSoyad.toLocaleLowerCase('tr-TR').includes(query)) ||
+                (h.tcNo && h.tcNo.includes(query)) ||
+                (h.dosyaNo && h.dosyaNo.toLocaleLowerCase('tr-TR').includes(query))
+            );
+            hastalariEkranaBas(filtrelenmis);
+        }
+
         function hastaSil(id) {
-            if (confirm("Bu hasta kaydını silmek istediğinize emin misiniz?")) {
-                hastalar = hastalar.filter(h => h.id !== id);
-                localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
-                hastalariEkranaBas();
-                showToast('Hasta kaydı silindi.');
-            }
+            silmeOnayiIste(
+                "Hasta Kaydı Silinecek",
+                "Bu hasta kaydını silmek istediğinize emin misiniz? Hastaya ait tüm geliş logları temizlenecektir.",
+                () => {
+                    hastalar = hastalar.filter(h => h.id !== id);
+                    localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
+                    hastaAramaYap();
+                    showToast('Hasta kaydı silindi.');
+                }
+            );
         }
 
         /* --- TAKSİT YÖNETİMİ FONKSİYONLARI --- */
@@ -755,12 +899,42 @@
         }
 
         function taksitSil(id) {
-            if (confirm("Bu taksit planını silmek istediğinize emin misiniz?")) {
-                taksitler = taksitler.filter(t => t.id !== id);
-                localStorage.setItem('klinik_taksitler', JSON.stringify(taksitler));
-                taksitleriEkranaBas();
-                showToast('Taksit planı silindi.');
+            silmeOnayiIste(
+                "Taksit Planı Silinecek",
+                "Bu taksitli ödeme planını silmek istediğinize emin misiniz?",
+                () => {
+                    taksitler = taksitler.filter(t => t.id !== id);
+                    localStorage.setItem('klinik_taksitler', JSON.stringify(taksitler));
+                    taksitleriEkranaBas();
+                    showToast('Taksit planı silindi.');
+                }
+            );
+        }
+
+        /* --- FİYAT LİSTESİ FONKSİYONLARI --- */
+        function fiyatlariEkranaBas(liste) {
+            const tbody = document.getElementById('fiyat-tablosu-body');
+            tbody.innerHTML = '';
+
+            if (liste.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="2" class="p-6 text-center text-slate-400">Aramanıza uygun işlem bulunamadı.</td></tr>`;
+                return;
             }
+
+            liste.forEach(item => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100 transition">
+                        <td class="p-4 font-semibold text-slate-800">${item.islem}</td>
+                        <td class="p-4 text-right font-mono font-bold text-amber-700">${item.ucret}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function fiyatAramaYap() {
+            const query = document.getElementById('fiyat-ara-input').value.toLocaleLowerCase('tr-TR');
+            const filtrelenmis = fiyatListesi.filter(f => f.islem.toLocaleLowerCase('tr-TR').includes(query));
+            fiyatlariEkranaBas(filtrelenmis);
         }
 
         /* --- PERSONEL FONKSİYONLARI --- */
@@ -820,12 +994,16 @@
         }
 
         function personelSil(id) {
-            if (confirm("Bu personel hesabını silmek istediğinize emin misiniz?")) {
-                personeller = personeller.filter(p => p.id !== id);
-                localStorage.setItem('klinik_personeller', JSON.stringify(personeller));
-                personelleriEkranaBas();
-                showToast('Personel hesabı silindi.');
-            }
+            silmeOnayiIste(
+                "Personel Hesabı Silinecek",
+                "Bu personel hesabını silmek istediğinize emin misiniz?",
+                () => {
+                    personeller = personeller.filter(p => p.id !== id);
+                    localStorage.setItem('klinik_personeller', JSON.stringify(personeller));
+                    personelleriEkranaBas();
+                    showToast('Personel hesabı silindi.');
+                }
+            );
         }
 
         function personelSec(id) {
