@@ -11,6 +11,55 @@
 </head>
 <body class="bg-slate-100 font-sans text-slate-800 h-screen flex overflow-hidden">
 
+    <!-- ================= GİRİŞ / LOGIN PANELİ ================= -->
+    <div id="login-sec" class="fixed inset-0 z-[100] bg-slate-900 flex items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900 via-slate-900 to-black">
+        <div class="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-2xl flex flex-col items-center">
+            
+            <!-- Logo & Başlık -->
+            <div class="mb-6 flex flex-col items-center text-center">
+                <div class="w-20 h-20 bg-blue-600 rounded-2xl flex items-center justify-center text-white text-3xl shadow-lg shadow-blue-500/30 mb-4 ring-4 ring-white/10">
+                    <i class="fa-solid fa-tooth"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-white tracking-wide">Bulvar Clinic</h1>
+                <p class="text-xs text-slate-300 mt-1">Klinik Yönetim & Portalı Girişi</p>
+            </div>
+
+            <!-- Giriş Formu -->
+            <form onsubmit="loginYap(event)" class="w-full space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Kullanıcı Adı</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="login-username" required placeholder="Kullanıcı Adı" class="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white/20 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Şifre</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="password" id="login-password" required placeholder="••••••••" class="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-xl text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white/20 transition">
+                    </div>
+                </div>
+
+                <!-- Hata Mesajı Alanı -->
+                <div id="login-error" class="hidden text-xs text-red-400 font-medium bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-lg text-center">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Kullanıcı adı veya şifre hatalı!
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm rounded-xl shadow-lg shadow-blue-600/30 transition transform active:scale-95 flex items-center justify-center gap-2 mt-2">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sisteme Giriş Yap
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <p class="text-[11px] text-slate-400">© 2026 Bulvar Clinic Yönetim Sistemi</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= ANA SİSTEM (Sol Menü & İçerik) ================= -->
+
     <!-- Sol Menü -->
     <aside class="w-16 bg-white border-r border-slate-200 flex flex-col items-center py-4 justify-between z-20 shadow-sm">
         <div class="flex flex-col items-center gap-6">
@@ -151,7 +200,7 @@
             </div>
         </main>
 
-        <!-- 3. SEKMELER: GELİR TAKİBİ (YENİ SEKTÖR) -->
+        <!-- 3. SEKMELER: GELİR TAKİBİ -->
         <main id="gelir-sec" class="flex-1 bg-slate-100 p-6 overflow-y-auto hidden">
             <div class="flex justify-between items-center mb-6">
                 <div>
@@ -246,7 +295,7 @@
             </div>
         </main>
 
-        <!-- 5. SEKMELER: FİYAT LİSTESİ (YENİ FİYAT EKLEMELİ) -->
+        <!-- 5. SEKMELER: FİYAT LİSTESİ -->
         <main id="fiyat-sec" class="flex-1 bg-slate-100 p-6 overflow-y-auto hidden">
             <div class="flex justify-between items-center mb-6 max-w-4xl mx-auto">
                 <div>
@@ -597,12 +646,28 @@
     </div>
 
     <!-- TOAST BİLDİRİMİ -->
-    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 border border-slate-800 text-white px-4 py-2.5 rounded-lg shadow-xl text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 border border-slate-800 text-white px-4 py-2.5 rounded-lg shadow-xl text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-[60] flex items-center gap-2">
         <i class="fa-solid fa-circle-check text-green-400"></i>
         <span id="toast-message">İşlem Başarılı</span>
     </div>
 
     <script>
+        // Giriş Yapma Kontrolü
+        function loginYap(e) {
+            e.preventDefault();
+            const user = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
+            const errDiv = document.getElementById('login-error');
+
+            if (user === 'Admin' && pass === '155704') {
+                errDiv.classList.add('hidden');
+                document.getElementById('login-sec').classList.add('hidden');
+                showToast('Hoş geldiniz, Admin!');
+            } else {
+                errDiv.classList.remove('hidden');
+            }
+        }
+
         let mevcuthangigun = new Date();
         let randevular = JSON.parse(localStorage.getItem('klinik_randevular')) || [];
         let hastalar = JSON.parse(localStorage.getItem('klinik_hastalar')) || [];
