@@ -25,6 +25,10 @@
                 <button onclick="switchTab('hastalar-sec')" id="btn-hastalar" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition" title="Hastalar & Loglar">
                     <i class="fa-solid fa-users text-lg"></i>
                 </button>
+                <button onclick="switchTab('taksit-sec')" id="btn-taksit" class="nav-btn w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition relative" title="Taksit Takibi">
+                    <i class="fa-solid fa-credit-card text-lg"></i>
+                    <span id="taksit-bildirim-rozet" class="hidden absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+                </button>
             </nav>
         </div>
 
@@ -61,12 +65,15 @@
                     <span id="header-aktif-personel" class="text-xs font-semibold text-slate-700">Yönlendiriliyor...</span>
                 </div>
 
-                <button onclick="openModal('randevu-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
-                    <i class="fa-solid fa-plus text-xs"></i> Randevu Ekle
-                </button>
-                <button onclick="openModal('hasta-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
-                    <i class="fa-solid fa-user-plus text-xs"></i> Hasta Kaydet
-                </button>
+                <!-- Sağ Üst Butonlar Kapsayıcısı (Sadece Takvimde Görünür) -->
+                <div id="header-butonlar" class="flex items-center gap-3">
+                    <button onclick="openModal('randevu-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
+                        <i class="fa-solid fa-plus text-xs"></i> Randevu Ekle
+                    </button>
+                    <button onclick="openModal('hasta-modal')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
+                        <i class="fa-solid fa-user-plus text-xs"></i> Hasta Kaydet
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -119,7 +126,39 @@
             </div>
         </main>
 
-        <!-- 3. SEKMELER: PERSONEL YÖNETİMİ & PROFİL -->
+        <!-- 3. SEKMELER: TAKSİTLİ ÖDEME TAKİBİ (YENİ EKLEME) -->
+        <main id="taksit-sec" class="flex-1 bg-slate-50 p-6 overflow-y-auto hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Taksitli Ödeme Takibi</h2>
+                    <p class="text-xs text-slate-500">Hasta taksit ödemeleri, kalan tutarlar ve gecikmiş ödeme bildirimleri</p>
+                </div>
+                <button onclick="openModal('taksit-modal')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-plus text-xs"></i> Yeni Taksit Planı Ekle
+                </button>
+            </div>
+
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs uppercase font-semibold">
+                            <th class="p-4">Hasta Adı</th>
+                            <th class="p-4">İşlem / Tedavi</th>
+                            <th class="p-4">Toplam Tutar</th>
+                            <th class="p-4">Kalan Tutar</th>
+                            <th class="p-4">Taksit Durumu</th>
+                            <th class="p-4">Durum / Bildirim</th>
+                            <th class="p-4 text-center">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="taksit-tablosu-body" class="divide-y divide-slate-100 text-sm text-slate-700">
+                        <!-- JS ile dolacak -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- 4. SEKMELER: PERSONEL YÖNETİMİ & PROFİL -->
         <main id="profil-sec" class="flex-1 bg-slate-50 p-6 overflow-y-auto hidden">
             <div class="flex justify-between items-center mb-6">
                 <div>
@@ -261,6 +300,50 @@
         </div>
     </div>
 
+    <!-- MODAL 4: TAKSİT PLANI EKLEME (YENİ EKLEME) -->
+    <div id="taksit-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 border border-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-semibold text-lg text-slate-800">Taksitli Ödeme Planı Ekle</h3>
+                <button onclick="closeModal('taksit-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="taksitKaydet(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Hasta Adı Soyadı</label>
+                    <input type="text" id="taksit-hasta" required placeholder="Örn: Canan Kılıç" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Yapılan İşlem / Tedavi</label>
+                    <input type="text" id="taksit-islem" required placeholder="Örn: İmplant Tedavisi" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Toplam Ücret (₺)</label>
+                        <input type="number" id="taksit-toplam" required placeholder="12000" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Toplam Taksit Sayısı</label>
+                        <input type="number" id="taksit-sayi" min="1" max="24" value="4" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Ödenen Taksit Adedi</label>
+                        <input type="number" id="taksit-odenen-sayi" min="0" value="0" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">İlk Taksit Tarihi</label>
+                        <input type="date" id="taksit-tarih" required class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="closeModal('taksit-modal')" class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 shadow-sm">Plani Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- TOAST BİLDİRİMİ -->
     <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-lg text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
         <i class="fa-solid fa-circle-check text-green-400"></i>
@@ -271,7 +354,10 @@
         let mevcuthangigun = new Date();
         let randevular = JSON.parse(localStorage.getItem('klinik_randevular')) || [];
         let hastalar = JSON.parse(localStorage.getItem('klinik_hastalar')) || [];
-        
+        let taksitler = JSON.parse(localStorage.getItem('klinik_taksitler')) || [
+            { id: 1, hasta: "Ahmet Yılmaz", islem: "Zirkonyum Kaplama", toplam: 15000, taksitSayisi: 5, odenenTaksit: 2, baslangicTarihi: "2026-08-01" }
+        ];
+
         let personeller = JSON.parse(localStorage.getItem('klinik_personeller')) || [
             { id: 1, adSoyad: "Dr. Dt. Ahmet Kaya", unvan: "Diş Hekimi", eposta: "ahmet@bulvarclinic.com", tel: "0532 000 0001", avatar: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150" },
             { id: 2, adSoyad: "Dt. Zeynep Can", unvan: "Ortodontist", eposta: "zeynep@bulvarclinic.com", tel: "0532 000 0002", avatar: "https://images.unsplash.com/photo-1594824813566-88855ce78961?w=150" }
@@ -298,6 +384,7 @@
             haftayiGuncelle();
             randevulariEkranaBas();
             hastalariEkranaBas();
+            taksitleriEkranaBas();
             personelleriEkranaBas();
             aktifPersoneliGuncelle();
         });
@@ -305,28 +392,43 @@
         function switchTab(tabId) {
             document.getElementById('takvim-sec').classList.add('hidden');
             document.getElementById('hastalar-sec').classList.add('hidden');
+            document.getElementById('taksit-sec').classList.add('hidden');
             document.getElementById('profil-sec').classList.add('hidden');
 
             document.getElementById('btn-takvim').classList.replace('text-blue-600', 'text-slate-400');
             document.getElementById('btn-takvim').classList.remove('bg-blue-50');
             document.getElementById('btn-hastalar').classList.replace('text-blue-600', 'text-slate-400');
             document.getElementById('btn-hastalar').classList.remove('bg-blue-50');
+            document.getElementById('btn-taksit').classList.replace('text-indigo-600', 'text-slate-400');
+            document.getElementById('btn-taksit').classList.remove('bg-indigo-50');
             document.getElementById('btn-profil').classList.remove('ring-2', 'ring-blue-500');
+
+            // İsteğiniz üzerine: Sağ üstteki randevu & hasta ekle butonları sadece Takvim sekmesinde gösterilir
+            const headerBtns = document.getElementById('header-butonlar');
 
             if (tabId === 'takvim-sec') {
                 document.getElementById('takvim-sec').classList.remove('hidden');
                 document.getElementById('btn-takvim').classList.replace('text-slate-400', 'text-blue-600');
                 document.getElementById('btn-takvim').classList.add('bg-blue-50');
                 document.getElementById('hafta-kontrolleri').classList.remove('hidden');
+                headerBtns.classList.remove('hidden');
             } else if (tabId === 'hastalar-sec') {
                 document.getElementById('hastalar-sec').classList.remove('hidden');
                 document.getElementById('btn-hastalar').classList.replace('text-slate-400', 'text-blue-600');
                 document.getElementById('btn-hastalar').classList.add('bg-blue-50');
                 document.getElementById('hafta-kontrolleri').classList.add('hidden');
+                headerBtns.classList.add('hidden');
+            } else if (tabId === 'taksit-sec') {
+                document.getElementById('taksit-sec').classList.remove('hidden');
+                document.getElementById('btn-taksit').classList.replace('text-slate-400', 'text-indigo-600');
+                document.getElementById('btn-taksit').classList.add('bg-indigo-50');
+                document.getElementById('hafta-kontrolleri').classList.add('hidden');
+                headerBtns.classList.add('hidden');
             } else if (tabId === 'profil-sec') {
                 document.getElementById('profil-sec').classList.remove('hidden');
                 document.getElementById('btn-profil').classList.add('ring-2', 'ring-blue-500');
                 document.getElementById('hafta-kontrolleri').classList.add('hidden');
+                headerBtns.classList.add('hidden');
             }
         }
 
@@ -441,7 +543,6 @@
             showToast('Randevu silindi.');
         }
 
-        // Yaş Hesaplama Fonksiyonu
         function yasHesapla(dogumTarihiStr) {
             if (!dogumTarihiStr) return '';
             const dogum = new Date(dogumTarihiStr);
@@ -511,6 +612,110 @@
             showToast('Hasta kaydı silindi.');
         }
 
+        /* --- TAKSİT YÖNETİMİ FONKSİYONLARI (YENİ EKLEME) --- */
+        function taksitKaydet(e) {
+            e.preventDefault();
+            const hasta = document.getElementById('taksit-hasta').value;
+            const islem = document.getElementById('taksit-islem').value;
+            const toplam = parseFloat(document.getElementById('taksit-toplam').value);
+            const taksitSayisi = parseInt(document.getElementById('taksit-sayi').value);
+            const odenenTaksit = parseInt(document.getElementById('taksit-odenen-sayi').value);
+            const baslangicTarihi = document.getElementById('taksit-tarih').value;
+
+            const yeniTaksit = { id: Date.now(), hasta, islem, toplam, taksitSayisi, odenenTaksit, baslangicTarihi };
+            taksitler.push(yeniTaksit);
+            localStorage.setItem('klinik_taksitler', JSON.stringify(taksitler));
+
+            taksitleriEkranaBas();
+            closeModal('taksit-modal');
+            showToast(`${hasta} için taksit planı oluşturuldu.`);
+            e.target.reset();
+        }
+
+        function taksitleriEkranaBas() {
+            const tbody = document.getElementById('taksit-tablosu-body');
+            tbody.innerHTML = '';
+            let gecikmeVarMi = false;
+
+            if (taksitler.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-400">Henüz taksitli ödeme kaydı bulunmuyor.</td></tr>`;
+                document.getElementById('taksit-bildirim-rozet').classList.add('hidden');
+                return;
+            }
+
+            const bugun = new Date();
+
+            taksitler.forEach(t => {
+                const birimTaksit = t.toplam / t.taksitSayisi;
+                const kalanTaksit = t.taksitSayisi - t.odenenTaksit;
+                const kalanTutar = kalanTaksit * birimTaksit;
+
+                // Gecikme Kontrolü
+                const baslangic = new Date(t.baslangicTarihi);
+                const beklenenOdenenAy = (bugun.getFullYear() - baslangic.getFullYear()) * 12 + (bugun.getMonth() - baslangic.getMonth());
+                const beklenenTaksit = Math.min(t.taksitSayisi, Math.max(0, beklenenOdenenAy + 1));
+
+                const gecikmis = t.odenenTaksit < beklenenTaksit && kalanTutar > 0;
+                if (gecikmis) gecikmeVarMi = true;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-4 font-semibold text-slate-800">${t.hasta}</td>
+                        <td class="p-4 text-slate-600 text-xs">${t.islem}</td>
+                        <td class="p-4 font-mono font-medium text-slate-700">${t.toplam.toLocaleString('tr-TR')} ₺</td>
+                        <td class="p-4 font-mono font-bold ${kalanTutar > 0 ? 'text-slate-800' : 'text-emerald-600'}">${kalanTutar.toLocaleString('tr-TR')} ₺</td>
+                        <td class="p-4 text-xs text-slate-600">
+                            <span class="font-bold text-slate-800">${t.odenenTaksit}</span> / ${t.taksitSayisi} Ödendi 
+                            <span class="text-slate-400">(${kalanTaksit} kalan)</span>
+                        </td>
+                        <td class="p-4 text-xs">
+                            ${kalanTutar === 0 ? 
+                                `<span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-md font-medium"><i class="fa-solid fa-check"></i> Tamamlandı</span>` : 
+                                (gecikmis ? 
+                                    `<span class="bg-red-100 text-red-700 px-2 py-1 rounded-md font-semibold animate-pulse"><i class="fa-solid fa-triangle-exclamation"></i> Gecikmiş Ödeme!</span>` : 
+                                    `<span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-md font-medium">Düzenli Ödeniyor</span>`
+                                )
+                            }
+                        </td>
+                        <td class="p-4 text-center space-x-1">
+                            ${kalanTaksit > 0 ? 
+                                `<button onclick="taksitOdendiYap(${t.id})" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded text-xs font-semibold transition" title="1 Taksit Tahsil Et">+1 Taksit Al</button>` : ''
+                            }
+                            <button onclick="taksitSil(${t.id})" class="text-red-500 hover:text-red-700 p-1" title="Planı Sil">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            // Sol menüdeki bildirim rozetini kontrol et
+            const rozet = document.getElementById('taksit-bildirim-rozet');
+            if (gecikmeVarMi) {
+                rozet.classList.remove('hidden');
+            } else {
+                rozet.classList.add('hidden');
+            }
+        }
+
+        function taksitOdendiYap(id) {
+            const t = taksitler.find(item => item.id === id);
+            if (t && t.odenenTaksit < t.taksitSayisi) {
+                t.odenenTaksit++;
+                localStorage.setItem('klinik_taksitler', JSON.stringify(taksitler));
+                taksitleriEkranaBas();
+                showToast(`${t.hasta} için 1 taksit ödemesi alındı.`);
+            }
+        }
+
+        function taksitSil(id) {
+            taksitler = taksitler.filter(t => t.id !== id);
+            localStorage.setItem('klinik_taksitler', JSON.stringify(taksitler));
+            taksitleriEkranaBas();
+            showToast('Taksit planı silindi.');
+        }
+
+        /* --- PERSONEL FONKSİYONLARI --- */
         function personelKaydet(e) {
             e.preventDefault();
             const adSoyad = document.getElementById('personel-adsoyad').value;
