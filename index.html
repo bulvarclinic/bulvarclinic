@@ -14,7 +14,7 @@
     <!-- Sol Menü -->
     <aside class="w-16 bg-white border-r border-slate-200 flex flex-col items-center py-4 justify-between z-20 shadow-sm">
         <div class="flex flex-col items-center gap-6">
-            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white text-lg shadow-md cursor-pointer">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white text-lg shadow-md cursor-pointer" onclick="switchTab('takvim-sec')">
                 <i class="fa-solid fa-tooth"></i>
             </div>
             <!-- Menü Butonları -->
@@ -27,9 +27,11 @@
                 </button>
             </nav>
         </div>
-        <div class="w-9 h-9 rounded-full bg-slate-300 overflow-hidden border border-slate-300">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Profil" class="w-full h-full object-cover">
-        </div>
+
+        <!-- Sol Alttaki Profil Sekmesi Butonu -->
+        <button onclick="switchTab('profil-sec')" id="btn-profil" class="w-10 h-10 rounded-full bg-slate-200 overflow-hidden border-2 border-slate-300 hover:border-blue-500 transition relative" title="Personel Yönetimi / Profil">
+            <img id="sidebar-profil-resim" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100" alt="Profil" class="w-full h-full object-cover">
+        </button>
     </aside>
 
     <!-- Ana Alan -->
@@ -40,7 +42,7 @@
             <div class="flex items-center gap-4">
                 <h1 class="text-xl font-bold text-slate-800">Bulvar Clinic</h1>
                 
-                <!-- Hafta Değiştirme Butonları (Sadece Takvimde Görünür) -->
+                <!-- Hafta Değiştirme Butonları (Takvimde Görünür) -->
                 <div id="hafta-kontrolleri" class="flex items-center gap-2 bg-slate-100 p-1 rounded-lg border border-slate-200 text-sm">
                     <button onclick="changeWeek(-1)" class="px-2.5 py-1 rounded bg-white hover:bg-slate-50 text-slate-700 shadow-sm transition">
                         <i class="fa-solid fa-chevron-left text-xs"></i> Önceki Hafta
@@ -53,6 +55,12 @@
             </div>
 
             <div class="flex items-center gap-3">
+                <!-- Aktif Kullanıcı Göstergesi -->
+                <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg mr-2">
+                    <div class="w-2 h-2 rounded-full bg-green-500"></div>
+                    <span id="header-aktif-personel" class="text-xs font-semibold text-slate-700">Yönlendiriliyor...</span>
+                </div>
+
                 <button onclick="openModal('randevu-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm transition">
                     <i class="fa-solid fa-plus text-xs"></i> Randevu Ekle
                 </button>
@@ -110,9 +118,26 @@
             </div>
         </main>
 
+        <!-- 3. SEKMELER: PERSONEL YÖNETİMİ & PROFİL -->
+        <main id="profil-sec" class="flex-1 bg-slate-50 p-6 overflow-y-auto hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">Personel Hesapları & Profiller</h2>
+                    <p class="text-xs text-slate-500">Klinik personellerini yönetebilir ve aktif kullanılan hesabı değiştirebilirsiniz.</p>
+                </div>
+                <button onclick="openModal('personel-modal')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-user-plus text-xs"></i> Yeni Personel Ekle
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="personel-kartlari-container">
+                <!-- Personel Kartları JS ile Gelecek -->
+            </div>
+        </main>
+
     </div>
 
-    <!-- MODAL 1: RANDEVU OLUMŞTURMA -->
+    <!-- MODAL 1: RANDEVU OLUŞTURMA -->
     <div id="randevu-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
         <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 border border-slate-200">
             <div class="flex justify-between items-center mb-4">
@@ -128,4 +153,405 @@
                     <label class="block text-xs font-medium text-slate-600 mb-1">Gün Seçimi</label>
                     <select id="modal-gun" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <option value="0">Pazartesi</option>
-                        <option value="1">Salı
+                        <option value="1">Salı</option>
+                        <option value="2">Çarşamba</option>
+                        <option value="3">Perşembe</option>
+                        <option value="4">Cuma</option>
+                        <option value="5">Cumartesi</option>
+                        <option value="6">Pazar</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Saat</label>
+                        <select id="modal-saat" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-600 mb-1">Yapılacak İşlem</label>
+                        <input type="text" id="modal-islem" placeholder="Muayene / Dolgu vs." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="closeModal('randevu-modal')" class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm">Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: HASTA KAYDI / LOG EKLEME -->
+    <div id="hasta-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 border border-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-semibold text-lg text-slate-800">Yeni Hasta / Geliş Logu Kaydet</h3>
+                <button onclick="closeModal('hasta-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="hastaKaydet(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Dosya Numarası</label>
+                    <input type="text" id="hasta-dosyano" required placeholder="Örn: D-1001" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Hasta Adı Soyadı</label>
+                    <input type="text" id="hasta-adsoyad" required placeholder="Örn: Mehmet Demir" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Telefon Numarası</label>
+                    <input type="tel" id="hasta-telefon" required placeholder="05XX XXX XX XX" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Geliş Sebebi / Log Notu</label>
+                    <textarea id="hasta-sebep" required rows="3" placeholder="Örn: Diş ağrısı şikayeti ile geldi." class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="closeModal('hasta-modal')" class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 shadow-sm">Hasta Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: PERSONEL / PROFİL EKLEME -->
+    <div id="personel-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6 border border-slate-200">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-semibold text-lg text-slate-800">Yeni Personel Hesabı Ekle</h3>
+                <button onclick="closeModal('personel-modal')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form onsubmit="personelKaydet(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Ad Soyad</label>
+                    <input type="text" id="personel-adsoyad" required placeholder="Örn: Dr. Ayşe Yılmaz" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Unvan / Rol</label>
+                    <select id="personel-unvan" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Diş Hekimi">Diş Hekimi</option>
+                        <option value="Uzman Hekim">Uzman Hekim</option>
+                        <option value="Klinik Asistanı">Klinik Asistanı</option>
+                        <option value="Resepsiyonist">Resepsiyonist</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">E-Posta Adresi</label>
+                    <input type="email" id="personel-eposta" required placeholder="ayse@bulvarclinic.com" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 mb-1">Telefon</label>
+                    <input type="tel" id="personel-tel" required placeholder="05XX XXX XX XX" class="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="closeModal('personel-modal')" class="px-4 py-2 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-50">İptal</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm">Personel Oluştur</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST BİLDİRİMİ -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-lg text-sm transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-green-400"></i>
+        <span id="toast-message">İşlem Başarılı</span>
+    </div>
+
+    <script>
+        let mevcuthangigun = new Date();
+        let randevular = JSON.parse(localStorage.getItem('klinik_randevular')) || [];
+        let hastalar = JSON.parse(localStorage.getItem('klinik_hastalar')) || [];
+        
+        let personeller = JSON.parse(localStorage.getItem('klinik_personeller')) || [
+            { id: 1, adSoyad: "Dr. Dt. Ahmet Kaya", unvan: "Diş Hekimi", eposta: "ahmet@bulvarclinic.com", tel: "0532 000 0001", avatar: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150" },
+            { id: 2, adSoyad: "Dt. Zeynep Can", unvan: "Ortodontist", eposta: "zeynep@bulvarclinic.com", tel: "0532 000 0002", avatar: "https://images.unsplash.com/photo-1594824813566-88855ce78961?w=150" }
+        ];
+
+        let aktifPersonelId = localStorage.getItem('klinik_aktif_personel') || personeller[0].id;
+
+        const saatler = [];
+        for (let h = 8; h <= 19; h++) {
+            const hourStr = h < 10 ? '0' + h : h;
+            saatler.push(`${hourStr}:00`);
+            if (h !== 19) saatler.push(`${hourStr}:30`);
+        }
+
+        const gunIsimleri = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const saatSelect = document.getElementById('modal-saat');
+            saatler.forEach(s => {
+                saatSelect.innerHTML += `<option value="${s}">${s}</option>`;
+            });
+
+            tabloyuOlustur();
+            haftayiGuncelle();
+            randevulariEkranaBas();
+            hastalariEkranaBas();
+            personelleriEkranaBas();
+            aktifPersoneliGuncelle();
+        });
+
+        function switchTab(tabId) {
+            document.getElementById('takvim-sec').classList.add('hidden');
+            document.getElementById('hastalar-sec').classList.add('hidden');
+            document.getElementById('profil-sec').classList.add('hidden');
+
+            document.getElementById('btn-takvim').classList.replace('text-blue-600', 'text-slate-400');
+            document.getElementById('btn-takvim').classList.remove('bg-blue-50');
+            document.getElementById('btn-hastalar').classList.replace('text-blue-600', 'text-slate-400');
+            document.getElementById('btn-hastalar').classList.remove('bg-blue-50');
+            document.getElementById('btn-profil').classList.remove('ring-2', 'ring-blue-500');
+
+            if (tabId === 'takvim-sec') {
+                document.getElementById('takvim-sec').classList.remove('hidden');
+                document.getElementById('btn-takvim').classList.replace('text-slate-400', 'text-blue-600');
+                document.getElementById('btn-takvim').classList.add('bg-blue-50');
+                document.getElementById('hafta-kontrolleri').classList.remove('hidden');
+            } else if (tabId === 'hastalar-sec') {
+                document.getElementById('hastalar-sec').classList.remove('hidden');
+                document.getElementById('btn-hastalar').classList.replace('text-slate-400', 'text-blue-600');
+                document.getElementById('btn-hastalar').classList.add('bg-blue-50');
+                document.getElementById('hafta-kontrolleri').classList.add('hidden');
+            } else if (tabId === 'profil-sec') {
+                document.getElementById('profil-sec').classList.remove('hidden');
+                document.getElementById('btn-profil').classList.add('ring-2', 'ring-blue-500');
+                document.getElementById('hafta-kontrolleri').classList.add('hidden');
+            }
+        }
+
+        function tabloyuOlustur() {
+            const container = document.getElementById('takvim-body');
+            container.innerHTML = '';
+
+            saatler.forEach(saat => {
+                const row = document.createElement('div');
+                row.className = "grid grid-cols-8 min-h-[50px]";
+                
+                let rowHtml = `<div class="p-2 text-xs text-slate-400 text-center border-r border-slate-100 bg-slate-50 font-mono flex items-center justify-center">${saat}</div>`;
+                
+                for (let gun = 0; gun < 7; gun++) {
+                    const cleanSaat = saat.replace(':', '');
+                    rowHtml += `
+                        <div id="cell-${gun}-${cleanSaat}" 
+                             onclick="quickOpenModal(${gun}, '${saat}')" 
+                             class="p-1 border-r border-slate-100 hover:bg-blue-50/50 cursor-pointer transition flex flex-col justify-center">
+                        </div>
+                    `;
+                }
+                row.innerHTML = rowHtml;
+                container.appendChild(row);
+            });
+        }
+
+        function haftayiGuncelle() {
+            const curr = new Date(mevcuthangigun);
+            const first = curr.getDate() - curr.getDay() + (curr.getDay() === 0 ? -6 : 1);
+
+            const pazartesi = new Date(curr.setDate(first));
+            const pazar = new Date(curr.setDate(first + 6));
+
+            document.getElementById('hafta-etiket').innerText = 
+                `${pazartesi.getDate()} ${pazartesi.toLocaleString('tr-TR', { month: 'short' })} - ${pazar.getDate()} ${pazar.toLocaleString('tr-TR', { month: 'short' })}`;
+
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(pazartesi);
+                day.setDate(pazartesi.getDate() + i);
+                document.getElementById(`gun-${i}`).innerHTML = `
+                    <div class="text-xs font-normal text-slate-400">${gunIsimleri[i]}</div>
+                    <div class="text-sm font-bold text-slate-800">${day.getDate()}</div>
+                `;
+            }
+        }
+
+        function changeWeek(direction) {
+            mevcuthangigun.setDate(mevcuthangigun.getDate() + (direction * 7));
+            haftayiGuncelle();
+            randevulariEkranaBas();
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('flex');
+        }
+
+        function quickOpenModal(gun, saat) {
+            document.getElementById('modal-gun').value = gun;
+            document.getElementById('modal-saat').value = saat;
+            openModal('randevu-modal');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('flex');
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function randevuKaydet(e) {
+            e.preventDefault();
+            const hasta = document.getElementById('modal-hasta').value;
+            const gun = document.getElementById('modal-gun').value;
+            const saat = document.getElementById('modal-saat').value;
+            const islem = document.getElementById('modal-islem').value || 'Muayene';
+
+            const yeniRandevu = { id: Date.now(), hasta, gun, saat, islem };
+            randevular.push(yeniRandevu);
+            localStorage.setItem('klinik_randevular', JSON.stringify(randevular));
+
+            randevulariEkranaBas();
+            closeModal('randevu-modal');
+            showToast(`${hasta} için randevu kaydedildi.`);
+            e.target.reset();
+        }
+
+        function randevulariEkranaBas() {
+            document.querySelectorAll('[id^="cell-"]').forEach(cell => cell.innerHTML = '');
+
+            randevular.forEach(item => {
+                const cleanSaat = item.saat.replace(':', '');
+                const targetCell = document.getElementById(`cell-${item.gun}-${cleanSaat}`);
+                if (targetCell) {
+                    targetCell.innerHTML = `
+                        <div class="bg-blue-100 border-l-4 border-blue-600 p-1.5 rounded text-xs shadow-xs relative group">
+                            <div class="font-bold text-blue-900 truncate">${item.hasta}</div>
+                            <div class="text-[10px] text-blue-700 truncate">${item.islem}</div>
+                            <button onclick="randevuSil(event, ${item.id})" class="absolute top-1 right-1 hidden group-hover:block text-red-500 hover:text-red-700 text-[10px]">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        function randevuSil(e, id) {
+            e.stopPropagation();
+            randevular = randevular.filter(r => r.id !== id);
+            localStorage.setItem('klinik_randevular', JSON.stringify(randevular));
+            randevulariEkranaBas();
+            showToast('Randevu silindi.');
+        }
+
+        function hastaKaydet(e) {
+            e.preventDefault();
+            const dosyaNo = document.getElementById('hasta-dosyano').value;
+            const adSoyad = document.getElementById('hasta-adsoyad').value;
+            const telefon = document.getElementById('hasta-telefon').value;
+            const sebep = document.getElementById('hasta-sebep').value;
+
+            const yeniHasta = { id: Date.now(), dosyaNo, adSoyad, telefon, sebep };
+            hastalar.push(yeniHasta);
+            localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
+
+            hastalariEkranaBas();
+            closeModal('hasta-modal');
+            showToast(`${adSoyad} hasta kaydı oluşturuldu.`);
+            e.target.reset();
+        }
+
+        function hastalariEkranaBas() {
+            const tbody = document.getElementById('hasta-tablosu-body');
+            tbody.innerHTML = '';
+
+            if (hastalar.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Henüz kayıtlı hasta bulunmuyor.</td></tr>`;
+                return;
+            }
+
+            hastalar.forEach(h => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 border-b border-slate-100">
+                        <td class="p-4 font-mono text-xs font-semibold text-blue-600">${h.dosyaNo}</td>
+                        <td class="p-4 font-semibold text-slate-800">${h.adSoyad}</td>
+                        <td class="p-4 text-slate-600">${h.telefon}</td>
+                        <td class="p-4 text-slate-600 text-xs max-w-xs">${h.sebep}</td>
+                        <td class="p-4 text-center">
+                            <button onclick="hastaSil(${h.id})" class="text-red-500 hover:text-red-700 p-1">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function hastaSil(id) {
+            hastalar = hastalar.filter(h => h.id !== id);
+            localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
+            hastalariEkranaBas();
+            showToast('Hasta kaydı silindi.');
+        }
+
+        function personelKaydet(e) {
+            e.preventDefault();
+            const adSoyad = document.getElementById('personel-adsoyad').value;
+            const unvan = document.getElementById('personel-unvan').value;
+            const eposta = document.getElementById('personel-eposta').value;
+            const tel = document.getElementById('personel-tel').value;
+            const avatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150";
+
+            const yeniPersonel = { id: Date.now(), adSoyad, unvan, eposta, tel, avatar };
+            personeller.push(yeniPersonel);
+            localStorage.setItem('klinik_personeller', JSON.stringify(personeller));
+
+            personelleriEkranaBas();
+            closeModal('personel-modal');
+            showToast(`${adSoyad} personeli eklendi.`);
+            e.target.reset();
+        }
+
+        function personelleriEkranaBas() {
+            const container = document.getElementById('personel-kartlari-container');
+            container.innerHTML = '';
+
+            personeller.forEach(p => {
+                const isAktif = p.id == aktifPersonelId;
+                container.innerHTML += `
+                    <div class="bg-white p-5 rounded-xl border ${isAktif ? 'border-blue-500 ring-2 ring-blue-100' : 'border-slate-200'} shadow-sm relative flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-4 mb-4">
+                                <img src="${p.avatar}" alt="${p.adSoyad}" class="w-14 h-14 rounded-full object-cover border border-slate-200">
+                                <div>
+                                    <h3 class="font-bold text-slate-800 text-base">${p.adSoyad}</h3>
+                                    <span class="bg-blue-50 text-blue-700 text-xs px-2 py-0.5 rounded font-medium">${p.unvan}</span>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5 text-xs text-slate-600 mb-4">
+                                <p><i class="fa-regular fa-envelope w-4"></i> ${p.eposta}</p>
+                                <p><i class="fa-solid fa-phone w-4"></i> ${p.tel}</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-2 pt-3 border-t border-slate-100">
+                            ${isAktif ? 
+                                `<button class="w-full py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg cursor-default flex items-center justify-center gap-1"><i class="fa-solid fa-circle-check"></i> Aktif Kullanıcı</button>` : 
+                                `<button onclick="personelSec(${p.id})" class="w-full py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium rounded-lg transition">Bu Hesaba Geç</button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function personelSec(id) {
+            aktifPersonelId = id;
+            localStorage.setItem('klinik_aktif_personel', id);
+            personelleriEkranaBas();
+            aktifPersoneliGuncelle();
+            showToast('Aktif profil değiştirildi.');
+        }
+
+        function aktifPersoneliGuncelle() {
+            const aktif = personeller.find(p => p.id == aktifPersonelId) || personeller[0];
+            if (aktif) {
+                document.getElementById('header-aktif-personel').innerText = `${aktif.unvan} - ${aktif.adSoyad}`;
+                document.getElementById('sidebar-profil-resim').src = aktif.avatar;
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
