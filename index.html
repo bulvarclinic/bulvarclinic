@@ -421,7 +421,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 mb-1">Doğum Tarihi</label>
-                        <input type="date" id="hasta-dogum" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="date" id="hasta-dogum" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
                 <div>
@@ -466,7 +466,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 mb-1">Doğum Tarihi</label>
-                        <input type="date" id="edit-hasta-dogum" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="date" id="edit-hasta-dogum" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
                 <div>
@@ -651,13 +651,12 @@
         <span id="toast-message">İşlem Başarılı</span>
     </div>
 
-    <!-- SUPABASE KÜTÜPHANESİ VE UYGULAMA JAVASCRIPT KODLARI -->
+    <!-- ================= SUPABASE SDK & JAVASCRIPT ENTEGRASYONU ================= -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // 1. SUPABASE BİLGiLERİ
-        const SUPABASE_URL = 'https://chvtm...supabase.co'; // Data API sayfasından aldığınız URL
-        const SUPABASE_ANON_KEY = 'sb_publishable_--rGAVu80_...'; // Kopyaladığınız Publishable Key
-        
+        // --- SUPABASE BAĞLANTI AYARLARI ---
+        const SUPABASE_URL = 'https://chvtmeobzytzlaqwzai.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // Giriş Yapma Kontrolü
@@ -677,12 +676,10 @@
         }
 
         let mevcuthangigun = new Date();
-        let randevular = JSON.parse(localStorage.getItem('klinik_randevular')) || [];
-        let hastalar = []; // Supabase üzerinden çekilecek
-        let gelirler = JSON.parse(localStorage.getItem('klinik_gelirler')) || [];
-        let taksitler = JSON.parse(localStorage.getItem('klinik_taksitler')) || [
-            { id: 1, hasta: "Ahmet Yılmaz", islem: "Zirkonyum Kaplama", toplam: 15000, taksitSayisi: 5, odenenTutar: 6000, baslangicTarihi: "2026-08-01" }
-        ];
+        let randevular = [];
+        let hastalar = [];
+        let gelirler = [];
+        let taksitler = [];
 
         let varsayilanFiyatlar = [
             { islem: "KANAL", ucret: "8.000 TL" },
@@ -725,18 +722,14 @@
             { islem: "MULTİ ( TEK ÜYE )", ucret: "2.000 TL" }
         ];
 
-        let fiyatListesi = JSON.parse(localStorage.getItem('klinik_fiyatlar')) || varsayilanFiyatlar;
+        let fiyatListesi = [];
+        let personeller = [];
 
-        let personeller = JSON.parse(localStorage.getItem('klinik_personeller')) || [
-            { id: 1, adSoyad: "Dr. Dt. Ahmet Kaya", unvan: "Diş Hekimi", eposta: "ahmet@bulvarclinic.com", tel: "0532 000 0001", avatar: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150" },
-            { id: 2, adSoyad: "Dt. Zeynep Can", unvan: "Ortodontist", eposta: "zeynep@bulvarclinic.com", tel: "0532 000 0002", avatar: "https://images.unsplash.com/photo-1594824813566-88855ce78961?w=150" }
-        ];
-
-        let aktifPersonelId = localStorage.getItem('klinik_aktif_personel') || personeller[0].id;
+        let aktifPersonelId = null;
         let mevcuthangigunTarihleri = []; 
         let silmeIslemCallback = null;
 
-        // Sayfalandırma Mantığı
+        // Sayfalandırma Mantığı (20 Hasta/Sayfa)
         let mevcutHastaSayfasi = 1;
         const sayfaBasiHasta = 20;
 
@@ -756,7 +749,7 @@
             return `${year}-${month}-${day}`;
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             const saatSelect = document.getElementById('modal-saat');
             saatler.forEach(s => {
                 saatSelect.innerHTML += `<option value="${s}">${s}</option>`;
@@ -764,12 +757,9 @@
 
             tabloyuOlustur();
             haftayiGuncelle();
-            hastalariGetir(); // Supabase'den çek
-            gelirleriEkranaBas();
-            taksitleriEkranaBas();
-            fiyatlariEkranaBas(fiyatListesi);
-            personelleriEkranaBas();
-            aktifPersoneliGuncelle();
+            
+            // Supabase'den ilk verileri yükleme
+            await verileriSupabasedenYukle();
 
             document.getElementById('gelir-tarih').value = formatDateISO(new Date());
 
@@ -782,14 +772,124 @@
             });
         });
 
+        // Supabase Verilerini Çekme
+        async function verileriSupabasedenYukle() {
+            await Promise.all([
+                hastalariGetirSupabase(),
+                randevulariGetirSupabase(),
+                gelirleriGetirSupabase(),
+                taksitleriGetirSupabase(),
+                fiyatlariGetirSupabase(),
+                personelleriGetirSupabase()
+            ]);
+        }
+
+        // --- SUPABASE VERİ ÇEKME FONKSİYONLARI ---
+        async function hastalariGetirSupabase() {
+            const { data, error } = await _supabase.from('hastalar').select('*').order('id', { ascending: false });
+            if (!error && data) {
+                hastalar = data.map(h => ({
+                    id: h.id,
+                    dosyaNo: h.dosya_no,
+                    tcNo: h.tc_no,
+                    adSoyad: h.ad_soyad,
+                    telefon: h.telefon,
+                    dogumTarihi: h.dogum_tarihi,
+                    sebep: h.sebep
+                }));
+            }
+            hastalariEkranaBas();
+            randevuHastaSelectDoldur();
+            gelirHastaSelectDoldur();
+        }
+
+        async function randevulariGetirSupabase() {
+            const { data, error } = await _supabase.from('randevular').select('*');
+            if (!error && data) {
+                randevular = data.map(r => ({
+                    id: r.id,
+                    hasta: r.hasta,
+                    gun: r.gun,
+                    saat: r.saat,
+                    islem: r.islem,
+                    tarih: r.tarih
+                }));
+            }
+            randevulariEkranaBas();
+        }
+
+        async function gelirleriGetirSupabase() {
+            const { data, error } = await _supabase.from('gelirler').select('*');
+            if (!error && data) {
+                gelirler = data.map(g => ({
+                    id: g.id,
+                    hasta: g.hasta,
+                    islem: g.islem,
+                    tutar: parseFloat(g.tutar),
+                    tur: g.tur,
+                    tarih: g.tarih
+                }));
+            }
+            gelirleriEkranaBas();
+        }
+
+        async function taksitleriGetirSupabase() {
+            const { data, error } = await _supabase.from('taksitler').select('*');
+            if (!error && data) {
+                taksitler = data.map(t => ({
+                    id: t.id,
+                    hasta: t.hasta,
+                    islem: t.islem,
+                    toplam: parseFloat(t.toplam),
+                    taksitSayisi: t.taksit_sayisi,
+                    odenenTutar: parseFloat(t.odenen_tutar),
+                    baslangicTarihi: t.baslangic_tarihi
+                }));
+            }
+            taksitleriEkranaBas();
+        }
+
+        async function fiyatlariGetirSupabase() {
+            const { data, error } = await _supabase.from('fiyatlar').select('*');
+            if (!error && data && data.length > 0) {
+                fiyatListesi = data.map(f => ({ id: f.id, islem: f.islem, ucret: f.ucret }));
+            } else {
+                fiyatListesi = varsayilanFiyatlar;
+            }
+            fiyatlariEkranaBas(fiyatListesi);
+        }
+
+        async function personelleriGetirSupabase() {
+            const { data, error } = await _supabase.from('personeller').select('*');
+            if (!error && data && data.length > 0) {
+                personeller = data.map(p => ({
+                    id: p.id,
+                    adSoyad: p.ad_soyad,
+                    unvan: p.unvan,
+                    eposta: p.eposta,
+                    tel: p.tel,
+                    avatar: p.avatar
+                }));
+            } else {
+                personeller = [
+                    { id: 1, adSoyad: "Dr. Dt. Ahmet Kaya", unvan: "Diş Hekimi", eposta: "ahmet@bulvarclinic.com", tel: "0532 000 0001", avatar: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=150" },
+                    { id: 2, adSoyad: "Dt. Zeynep Can", unvan: "Ortodontist", eposta: "zeynep@bulvarclinic.com", tel: "0532 000 0002", avatar: "https://images.unsplash.com/photo-1594824813566-88855ce78961?w=150" }
+                ];
+            }
+            aktifPersonelId = personeller[0]?.id;
+            personelleriEkranaBas();
+            aktifPersoneliGuncelle();
+        }
+
+        // Hasta Açılır Menüleri Doldurur
         function randevuHastaSelectDoldur() {
             const select = document.getElementById('modal-hasta-select');
             select.innerHTML = '';
             if (hastalar.length === 0) {
-                select.innerHTML = `<option value="">Kayıtlı Hasta Bulunamadı</option>`;
+                select.innerHTML = `<option value="">Kayıtlı Hasta Bulunamadı (Önce Kaydediniz)</option>`;
             } else {
                 hastalar.forEach(h => {
-                    select.innerHTML += `<option value="${h.ad_soyad}">${h.ad_soyad} (${h.dosya_no || ''})</option>`;
+                    select.innerHTML += `<option value="${h.adSoyad}">${h.adSoyad} (${h.dosyaNo})</option>`;
                 });
             }
         }
@@ -801,7 +901,7 @@
                 select.innerHTML = `<option value="">Kayıtlı Hasta Bulunamadı</option>`;
             } else {
                 hastalar.forEach(h => {
-                    select.innerHTML += `<option value="${h.ad_soyad}">${h.ad_soyad} (${h.dosya_no || ''})</option>`;
+                    select.innerHTML += `<option value="${h.adSoyad}">${h.adSoyad} (${h.dosyaNo})</option>`;
                 });
             }
         }
@@ -939,7 +1039,7 @@
             openModal('sil-onay-modal');
         }
 
-        function randevuKaydet(e) {
+        async function randevuKaydet(e) {
             e.preventDefault();
             const hasta = document.getElementById('modal-hasta-select').value;
             if (!hasta) {
@@ -950,17 +1050,24 @@
             const gunIndex = parseInt(document.getElementById('modal-gun').value);
             const saat = document.getElementById('modal-saat').value;
             const islem = document.getElementById('modal-islem').value || 'Muayene';
-
             const tarih = mevcuthangigunTarihleri[gunIndex];
 
-            const yeniRandevu = { id: Date.now(), hasta, gun: gunIndex, saat, islem, tarih };
-            randevular.push(yeniRandevu);
-            localStorage.setItem('klinik_randevular', JSON.stringify(randevular));
+            const { data, error } = await _supabase.from('randevular').insert([{
+                hasta: hasta,
+                gun: gunIndex,
+                saat: saat,
+                islem: islem,
+                tarih: tarih
+            }]).select();
 
-            randevulariEkranaBas();
-            closeModal('randevu-modal');
-            showToast(`${hasta} için randevu kaydedildi.`);
-            e.target.reset();
+            if (!error && data) {
+                await randevulariGetirSupabase();
+                closeModal('randevu-modal');
+                showToast(`${hasta} için randevu kaydedildi.`);
+                e.target.reset();
+            } else {
+                alert('Randevu kaydedilemedi!');
+            }
         }
 
         function randevulariEkranaBas() {
@@ -992,85 +1099,91 @@
             silmeOnayiIste(
                 "Randevu Silinecek",
                 "Bu randevu kaydını silmek istediğinize emin misiniz?",
-                () => {
-                    randevular = randevular.filter(r => r.id !== id);
-                    localStorage.setItem('klinik_randevular', JSON.stringify(randevular));
-                    randevulariEkranaBas();
-                    showToast('Randevu silindi.');
+                async () => {
+                    const { error } = await _supabase.from('randevular').delete().eq('id', id);
+                    if (!error) {
+                        await randevulariGetirSupabase();
+                        showToast('Randevu silindi.');
+                    }
                 }
             );
         }
 
-        /* --- SUPABASE HASTA İŞLEMLERİ --- */
+        function yasHesapla(dogumTarihiStr) {
+            if (!dogumTarihiStr) return '';
+            const dogum = new Date(dogumTarihiStr);
+            const bugun = new Date();
+            let yas = bugun.getFullYear() - dogum.getFullYear();
+            const ayFarki = bugun.getMonth() - dogum.getMonth();
+            if (ayFarki < 0 || (ayFarki === 0 && bugun.getDate() < dogum.getDate())) {
+                yas--;
+            }
+            return yas >= 0 ? yas : 0;
+        }
+
         async function hastaKaydet(e) {
             e.preventDefault();
-            const yeniHasta = {
-                dosya_no: document.getElementById('hasta-dosyano').value,
-                tc: document.getElementById('hasta-tc').value,
-                ad_soyad: document.getElementById('hasta-adsoyad').value,
-                telefon: document.getElementById('hasta-telefon').value,
-                sebep: document.getElementById('hasta-sebep').value
-            };
+            const dosyaNo = document.getElementById('hasta-dosyano').value;
+            const tcNo = document.getElementById('hasta-tc').value;
+            const adSoyad = document.getElementById('hasta-adsoyad').value;
+            const telefon = document.getElementById('hasta-telefon').value;
+            const dogumTarihi = document.getElementById('hasta-dogum').value;
+            const sebep = document.getElementById('hasta-sebep').value;
 
-            const { data, error } = await _supabase
-                .from('hastalar')
-                .insert([yeniHasta]);
+            const { data, error } = await _supabase.from('hastalar').insert([{
+                dosya_no: dosyaNo,
+                tc_no: tcNo,
+                ad_soyad: adSoyad,
+                telefon: telefon,
+                dogum_tarihi: dogumTarihi,
+                sebep: sebep
+            }]).select();
 
-            if (error) {
-                console.error('Hata:', error);
-                alert('Hasta kaydedilemedi! Lütfen Supabase RLS ayarlarını kontrol edin.');
-            } else {
-                showToast(`${yeniHasta.ad_soyad} kaydı Supabase'e kaydedildi.`);
+            if (!error && data) {
+                await hastalariGetirSupabase();
                 closeModal('hasta-modal');
-                hastalariGetir();
+                showToast(`${adSoyad} hasta kaydı oluşturuldu.`);
                 e.target.reset();
+            } else {
+                alert('Hasta kaydı oluşturulamadı!');
             }
         }
 
-        async function hastalariGetir(liste) {
-            if (!liste) {
-                const { data, error } = await _supabase
-                    .from('hastalar')
-                    .select('*')
-                    .order('id', { ascending: false });
-
-                if (error) {
-                    console.error('Veri çekilemedi:', error);
-                    return;
-                }
-                hastalar = data || [];
-            } else {
-                hastalar = liste;
-            }
-
+        /* --- HASTA KAYITLARI (20'Lİ SAYFALANDIRMA) --- */
+        function hastalariEkranaBas(liste) {
             const tbody = document.getElementById('hasta-tablosu-body');
             tbody.innerHTML = '';
 
-            const toplamHasta = hastalar.length;
+            const kaynakListe = liste || hastalar;
+            const toplamHasta = kaynakListe.length;
             const toplamSayfa = Math.ceil(toplamHasta / sayfaBasiHasta) || 1;
 
             if (mevcutHastaSayfasi > toplamSayfa) mevcutHastaSayfasi = toplamSayfa;
             if (mevcutHastaSayfasi < 1) mevcutHastaSayfasi = 1;
 
             const startIndex = (mevcutHastaSayfasi - 1) * sayfaBasiHasta;
-            const sayfaVerisi = hastalar.slice(startIndex, startIndex + sayfaBasiHasta);
+            const sayfaVerisi = kaynakListe.slice(startIndex, startIndex + sayfaBasiHasta);
 
             if (sayfaVerisi.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Veritabanında kayıtlı hasta bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Kayıtlı hasta bulunamadı.</td></tr>`;
             } else {
                 sayfaVerisi.forEach(h => {
+                    const yas = yasHesapla(h.dogumTarihi);
                     tbody.innerHTML += `
                         <tr onclick="hastaDuzenleAc(${h.id})" class="hover:bg-slate-50 border-b border-slate-200 cursor-pointer transition">
-                            <td class="p-4 font-mono text-xs font-semibold text-blue-600">${h.dosya_no || '-'}</td>
-                            <td class="p-4 font-mono text-xs text-slate-500">${h.tc || '-'}</td>
-                            <td class="p-4 font-semibold text-slate-800">${h.ad_soyad || '-'}</td>
+                            <td class="p-4 font-mono text-xs font-semibold text-blue-600">${h.dosyaNo || '-'}</td>
+                            <td class="p-4 font-mono text-xs text-slate-500">${h.tcNo || '-'}</td>
+                            <td class="p-4 font-semibold text-slate-800">
+                                ${h.adSoyad || '-'} 
+                                ${yas !== '' ? `<span class="bg-slate-100 text-slate-600 text-[11px] font-normal px-2 py-0.5 rounded-full ml-1 border border-slate-200">${yas} yaş</span>` : ''}
+                            </td>
                             <td class="p-4 text-slate-600">${h.telefon || '-'}</td>
                             <td class="p-4 text-slate-500 text-xs max-w-xs truncate">${h.sebep || '-'}</td>
                             <td class="p-4 text-center space-x-2" onclick="event.stopPropagation()">
                                 <button onclick="hastaDuzenleAc(${h.id})" class="text-blue-600 hover:text-blue-800 p-1" title="Düzenle">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button onclick="hastaSil(${h.id})" class="text-red-500 hover:text-red-700 p-1" title="Sil">
+                                <button onclick="hastaSil(${h.id})" class="text-red-500 hover:text-red-700 p-1" title="Hasta Kaydını Sil">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -1079,18 +1192,16 @@
                 });
             }
 
-            document.getElementById('hasta-sayfa-bilgi').innerText = `Toplam ${toplamHasta} hastadan ${startIndex + 1}-${Math.min(startIndex + sayfaBasiHasta, toplamHasta)} arası gösteriliyor`;
+            // Sayfalama Elemanlarını Güncelle
+            document.getElementById('hasta-sayfa-bilgi').innerText = `Toplam ${toplamHasta} hastadan ${toplamHasta > 0 ? startIndex + 1 : 0}-${Math.min(startIndex + sayfaBasiHasta, toplamHasta)} arası gösteriliyor`;
             document.getElementById('hasta-sayfa-numara').innerText = `${mevcutHastaSayfasi} / ${toplamSayfa}`;
             document.getElementById('btn-hasta-onceki').disabled = mevcutHastaSayfasi === 1;
             document.getElementById('btn-hasta-sonraki').disabled = mevcutHastaSayfasi === toplamSayfa;
-
-            randevuHastaSelectDoldur();
-            gelirHastaSelectDoldur();
         }
 
         function hastaSayfaDegistir(yon) {
             mevcutHastaSayfasi += yon;
-            hastalariGetir(hastalar);
+            hastalariEkranaBas();
         }
 
         function hastaDuzenleAc(id) {
@@ -1098,10 +1209,11 @@
             if (!hasta) return;
 
             document.getElementById('edit-hasta-id').value = hasta.id;
-            document.getElementById('edit-hasta-dosyano').value = hasta.dosya_no || '';
-            document.getElementById('edit-hasta-tc').value = hasta.tc || '';
-            document.getElementById('edit-hasta-adsoyad').value = hasta.ad_soyad || '';
+            document.getElementById('edit-hasta-dosyano').value = hasta.dosyaNo || '';
+            document.getElementById('edit-hasta-tc').value = hasta.tcNo || '';
+            document.getElementById('edit-hasta-adsoyad').value = hasta.adSoyad || '';
             document.getElementById('edit-hasta-telefon').value = hasta.telefon || '';
+            document.getElementById('edit-hasta-dogum').value = hasta.dogumTarihi || '';
             document.getElementById('edit-hasta-sebep').value = hasta.sebep || '';
 
             openModal('hasta-duzenle-modal');
@@ -1111,63 +1223,52 @@
             e.preventDefault();
             const id = parseInt(document.getElementById('edit-hasta-id').value);
 
-            const guncelData = {
+            const { error } = await _supabase.from('hastalar').update({
                 dosya_no: document.getElementById('edit-hasta-dosyano').value,
-                tc: document.getElementById('edit-hasta-tc').value,
+                tc_no: document.getElementById('edit-hasta-tc').value,
                 ad_soyad: document.getElementById('edit-hasta-adsoyad').value,
                 telefon: document.getElementById('edit-hasta-telefon').value,
+                dogum_tarihi: document.getElementById('edit-hasta-dogum').value,
                 sebep: document.getElementById('edit-hasta-sebep').value
-            };
+            }).eq('id', id);
 
-            const { error } = await _supabase
-                .from('hastalar')
-                .update(guncelData)
-                .eq('id', id);
-
-            if (error) {
-                console.error(error);
-                alert('Güncellenemedi');
-            } else {
+            if (!error) {
+                await hastalariGetirSupabase();
                 closeModal('hasta-duzenle-modal');
-                hastalariGetir();
-                showToast('Hasta bilgileri güncellendi.');
+                showToast('Hasta bilgileri başarıyla güncellendi.');
+            } else {
+                alert('Hasta bilgileri güncellenemedi!');
             }
         }
 
         function hastaAramaYap() {
-            const query = document.getElementById('hasta-ara-input').value.toLocaleLowerCase('tr-TR');
+            const inputVal = document.getElementById('hasta-ara-input').value;
+            const query = inputVal.toLocaleLowerCase('tr-TR');
             const filtrelenmis = hastalar.filter(h => 
-                (h.ad_soyad && h.ad_soyad.toLocaleLowerCase('tr-TR').includes(query)) ||
-                (h.tc && h.tc.includes(query)) ||
-                (h.dosya_no && h.dosya_no.toLocaleLowerCase('tr-TR').includes(query))
+                (h.adSoyad && h.adSoyad.toLocaleLowerCase('tr-TR').includes(query)) ||
+                (h.tcNo && h.tcNo.includes(query)) ||
+                (h.dosyaNo && h.dosyaNo.toLocaleLowerCase('tr-TR').includes(query))
             );
             mevcutHastaSayfasi = 1;
-            hastalariGetir(filtrelenmis);
+            hastalariEkranaBas(filtrelenmis);
         }
 
-        async function hastaSil(id) {
+        function hastaSil(id) {
             silmeOnayiIste(
                 "Hasta Kaydı Silinecek",
-                "Bu hasta kaydını veritabanından silmek istediğinize emin misiniz?",
+                "Bu hasta kaydını silmek istediğinize emin misiniz?",
                 async () => {
-                    const { error } = await _supabase
-                        .from('hastalar')
-                        .delete()
-                        .eq('id', id);
-
-                    if (error) {
-                        console.error(error);
-                        alert('Silinemedi');
-                    } else {
-                        hastalariGetir();
+                    const { error } = await _supabase.from('hastalar').delete().eq('id', id);
+                    if (!error) {
+                        await hastalariGetirSupabase();
                         showToast('Hasta kaydı silindi.');
                     }
                 }
             );
         }
 
-        /* --- GELİR TAKİBİ --- */
-        function gelirKaydet(e) {
+        /* --- GELİR TAKİBİ VE HESAPLAMA FONKSİYONLARI --- */
+        async function gelirKaydet(e) {
             e.preventDefault();
             const hasta = document.getElementById('gelir-hasta-select').value;
             const islem = document.getElementById('gelir-islem').value;
@@ -1175,15 +1276,23 @@
             const tur = document.getElementById('gelir-tur').value;
             const tarih = document.getElementById('gelir-tarih').value;
 
-            const yeniGelir = { id: Date.now(), hasta, islem, tutar, tur, tarih };
-            gelirler.push(yeniGelir);
-            localStorage.setItem('klinik_gelirler', JSON.stringify(gelirler));
+            const { data, error } = await _supabase.from('gelirler').insert([{
+                hasta: hasta,
+                islem: islem,
+                tutar: tutar,
+                tur: tur,
+                tarih: tarih
+            }]).select();
 
-            gelirleriEkranaBas();
-            closeModal('gelir-modal');
-            showToast(`${tutar.toLocaleString('tr-TR')} ₺ ödeme kaydedildi.`);
-            e.target.reset();
-            document.getElementById('gelir-tarih').value = formatDateISO(new Date());
+            if (!error && data) {
+                await gelirleriGetirSupabase();
+                closeModal('gelir-modal');
+                showToast(`${tutar.toLocaleString('tr-TR')} ₺ ödeme kaydedildi.`);
+                e.target.reset();
+                document.getElementById('gelir-tarih').value = formatDateISO(new Date());
+            } else {
+                alert('Gelir kaydı oluşturulamadı!');
+            }
         }
 
         function gelirleriEkranaBas() {
@@ -1191,8 +1300,9 @@
             tbody.innerHTML = '';
 
             if (gelirler.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Henüz kaydedilmiş gelir bulunmamaktadır.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Henüz kaydedilmiş gelir/ödeme bulunmamaktadır.</td></tr>`;
             } else {
+                // Tarihe göre azalan sırala
                 const siraliGelirler = [...gelirler].sort((a,b) => new Date(b.tarih) - new Date(a.tarih));
                 siraliGelirler.forEach(g => {
                     tbody.innerHTML += `
@@ -1205,7 +1315,7 @@
                             </td>
                             <td class="p-4 text-right font-mono font-bold text-emerald-600">+${g.tutar.toLocaleString('tr-TR')} ₺</td>
                             <td class="p-4 text-center">
-                                <button onclick="gelirSil(${g.id})" class="text-red-500 hover:text-red-700 p-1" title="Sil">
+                                <button onclick="gelirSil(${g.id})" class="text-red-500 hover:text-red-700 p-1" title="Gelir Kaydını Sil">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -1244,17 +1354,18 @@
             silmeOnayiIste(
                 "Gelir Kaydı Silinecek",
                 "Bu gelir kaydını silmek istediğinize emin misiniz?",
-                () => {
-                    gelirler = gelirler.filter(g => g.id !== id);
-                    localStorage.setItem('klinik_gelirler', JSON.stringify(gelirler));
-                    gelirleriEkranaBas();
-                    showToast('Gelir kaydı silindi.');
+                async () => {
+                    const { error } = await _supabase.from('gelirler').delete().eq('id', id);
+                    if (!error) {
+                        await gelirleriGetirSupabase();
+                        showToast('Gelir kaydı silindi.');
+                    }
                 }
             );
         }
 
         /* --- TAKSİT YÖNETİMİ --- */
-        function taksitKaydet(e) {
+        async function taksitKaydet(e) {
             e.preventDefault();
             const hasta = document.getElementById('taksit-hasta').value;
             const islem = document.getElementById('taksit-islem').value;
@@ -1263,14 +1374,23 @@
             const odenenTutar = parseFloat(document.getElementById('taksit-odenen-tutar').value) || 0;
             const baslangicTarihi = document.getElementById('taksit-tarih').value;
 
-            const yeniTaksit = { id: Date.now(), hasta, islem, toplam, taksitSayisi, odenenTutar, baslangicTarihi };
-            taksitler.push(yeniTaksit);
-            localStorage.setItem('klinik_taksitler', JSON.stringify(taksitler));
+            const { data, error } = await _supabase.from('taksitler').insert([{
+                hasta: hasta,
+                islem: islem,
+                toplam: toplam,
+                taksit_sayisi: taksitSayisi,
+                odenen_tutar: odenenTutar,
+                baslangic_tarihi: baslangicTarihi
+            }]).select();
 
-            taksitleriEkranaBas();
-            closeModal('taksit-modal');
-            showToast(`${hasta} için taksit planı oluşturuldu.`);
-            e.target.reset();
+            if (!error && data) {
+                await taksitleriGetirSupabase();
+                closeModal('taksit-modal');
+                showToast(`${hasta} için taksit planı oluşturuldu.`);
+                e.target.reset();
+            } else {
+                alert('Taksit planı eklenemedi!');
+            }
         }
 
         function taksitleriEkranaBas() {
@@ -1340,7 +1460,7 @@
             }
         }
 
-        function taksitOdemeAl(id) {
+        async function taksitOdemeAl(id) {
             const t = taksitler.find(item => item.id === id);
             if (!t) return;
 
@@ -1351,18 +1471,23 @@
             if (girilenTutarStr !== null) {
                 const girilenTutar = parseFloat(girilenTutarStr);
                 if (!isNaN(girilenTutar) && girilenTutar > 0) {
-                    t.odenenTutar = (t.odenenTutar || 0) + girilenTutar;
-                    if (t.odenenTutar > t.toplam) t.odenenTutar = t.toplam;
+                    let yeniOdenen = (t.odenenTutar || 0) + girilenTutar;
+                    if (yeniOdenen > t.toplam) yeniOdenen = t.toplam;
                     
-                    localStorage.setItem('klinik_taksitler', JSON.stringify(taksitler));
-                    taksitleriEkranaBas();
-                    
-                    const yeniGelir = { id: Date.now(), hasta: t.hasta, islem: `${t.islem} (Taksit Ödemesi)`, tutar: girilenTutar, tur: "Taksit Tahsilatı", tarih: formatDateISO(new Date()) };
-                    gelirler.push(yeniGelir);
-                    localStorage.setItem('klinik_gelirler', JSON.stringify(gelirler));
-                    gelirleriEkranaBas();
+                    const { error } = await _supabase.from('taksitler').update({ odenen_tutar: yeniOdenen }).eq('id', id);
 
-                    showToast(`${t.hasta} hesabına ${girilenTutar.toLocaleString('tr-TR')} ₺ ödeme işlendi.`);
+                    if (!error) {
+                        await _supabase.from('gelirler').insert([{
+                            hasta: t.hasta,
+                            islem: `${t.islem} (Taksit Ödemesi)`,
+                            tutar: girilenTutar,
+                            tur: "Taksit Tahsilatı",
+                            tarih: formatDateISO(new Date())
+                        }]);
+
+                        await Promise.all([taksitleriGetirSupabase(), gelirleriGetirSupabase()]);
+                        showToast(`${t.hasta} hesabına ${girilenTutar.toLocaleString('tr-TR')} ₺ ödeme işlendi.`);
+                    }
                 } else {
                     alert("Geçersiz bir tutar girdiniz.");
                 }
@@ -1373,28 +1498,35 @@
             silmeOnayiIste(
                 "Taksit Planı Silinecek",
                 "Bu taksitli ödeme planını silmek istediğinize emin misiniz?",
-                () => {
-                    taksitler = taksitler.filter(t => t.id !== id);
-                    localStorage.setItem('klinik_taksitler', JSON.stringify(taksitler));
-                    taksitleriEkranaBas();
-                    showToast('Taksit planı silindi.');
+                async () => {
+                    const { error } = await _supabase.from('taksitler').delete().eq('id', id);
+                    if (!error) {
+                        await taksitleriGetirSupabase();
+                        showToast('Taksit planı silindi.');
+                    }
                 }
             );
         }
 
-        /* --- FİYAT LİSTESİ --- */
-        function yeniFiyatKaydet(e) {
+        /* --- FİYAT LİSTESİ VE EKLEME FONKSİYONLARI --- */
+        async function yeniFiyatKaydet(e) {
             e.preventDefault();
             const islem = document.getElementById('yeni-fiyat-islem').value;
             const ucret = document.getElementById('yeni-fiyat-ucret').value;
 
-            fiyatListesi.push({ islem, ucret });
-            localStorage.setItem('klinik_fiyatlar', JSON.stringify(fiyatListesi));
+            const { data, error } = await _supabase.from('fiyatlar').insert([{
+                islem: islem,
+                ucret: ucret
+            }]).select();
 
-            fiyatlariEkranaBas(fiyatListesi);
-            closeModal('fiyat-modal');
-            showToast(`${islem} fiyat listesine eklendi.`);
-            e.target.reset();
+            if (!error && data) {
+                await fiyatlariGetirSupabase();
+                closeModal('fiyat-modal');
+                showToast(`${islem} fiyat listesine eklendi.`);
+                e.target.reset();
+            } else {
+                alert('Fiyat eklenemedi!');
+            }
         }
 
         function fiyatlariEkranaBas(liste) {
@@ -1402,7 +1534,7 @@
             tbody.innerHTML = '';
 
             if (liste.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-400">İşlem bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-400">Aramanıza uygun işlem bulunamadı.</td></tr>`;
                 return;
             }
 
@@ -1412,21 +1544,25 @@
                         <td class="p-4 font-semibold text-slate-800">${item.islem}</td>
                         <td class="p-4 text-right font-mono font-bold text-amber-600">${item.ucret}</td>
                         <td class="p-4 text-center">
-                            <button onclick="fiyatSil(${index})" class="text-slate-400 hover:text-red-500 transition" title="Sil"><i class="fa-solid fa-trash"></i></button>
+                            <button onclick="fiyatSil(${item.id || index})" class="text-slate-400 hover:text-red-500 transition" title="Sil"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>
                 `;
             });
         }
 
-        function fiyatSil(index) {
+        function fiyatSil(id) {
             silmeOnayiIste(
                 "Fiyat Silinecek",
-                "Bu işlemi fiyat listesinden silmek istediğinize emin misiniz?",
-                () => {
-                    fiyatListesi.splice(index, 1);
-                    localStorage.setItem('klinik_fiyatlar', JSON.stringify(fiyatListesi));
-                    fiyatlariEkranaBas(fiyatListesi);
+                "Bu işlem tarifesini fiyat listesinden silmek istediğinize emin misiniz?",
+                async () => {
+                    if (typeof id === 'number') {
+                        const { error } = await _supabase.from('fiyatlar').delete().eq('id', id);
+                        if (!error) await fiyatlariGetirSupabase();
+                    } else {
+                        fiyatListesi.splice(id, 1);
+                        fiyatlariEkranaBas(fiyatListesi);
+                    }
                     showToast('Fiyat kaydı silindi.');
                 }
             );
@@ -1438,8 +1574,8 @@
             fiyatlariEkranaBas(filtrelenmis);
         }
 
-        /* --- PERSONEL İŞLEMLERİ --- */
-        function personelKaydet(e) {
+        /* --- PERSONEL FONKSİYONLARI --- */
+        async function personelKaydet(e) {
             e.preventDefault();
             const adSoyad = document.getElementById('personel-adsoyad').value;
             const unvan = document.getElementById('personel-unvan').value;
@@ -1447,14 +1583,22 @@
             const tel = document.getElementById('personel-tel').value;
             const avatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150";
 
-            const yeniPersonel = { id: Date.now(), adSoyad, unvan, eposta, tel, avatar };
-            personeller.push(yeniPersonel);
-            localStorage.setItem('klinik_personeller', JSON.stringify(personeller));
+            const { data, error } = await _supabase.from('personeller').insert([{
+                ad_soyad: adSoyad,
+                unvan: unvan,
+                eposta: eposta,
+                tel: tel,
+                avatar: avatar
+            }]).select();
 
-            personelleriEkranaBas();
-            closeModal('personel-modal');
-            showToast(`${adSoyad} personeli eklendi.`);
-            e.target.reset();
+            if (!error && data) {
+                await personelleriGetirSupabase();
+                closeModal('personel-modal');
+                showToast(`${adSoyad} personeli eklendi.`);
+                e.target.reset();
+            } else {
+                alert('Personel oluşturulamadı!');
+            }
         }
 
         function personelleriEkranaBas() {
@@ -1475,7 +1619,7 @@
                                     </div>
                                 </div>
                                 ${!isAktif && personeller.length > 1 ? 
-                                    `<button onclick="personelSil(${p.id})" class="text-slate-400 hover:text-red-500 transition p-1" title="Sil"><i class="fa-solid fa-trash"></i></button>` : ''
+                                    `<button onclick="personelSil(${p.id})" class="text-slate-400 hover:text-red-500 transition p-1" title="Hesabı Sil"><i class="fa-solid fa-trash"></i></button>` : ''
                                 }
                             </div>
                             <div class="space-y-1.5 text-xs text-slate-500 mb-4">
@@ -1498,18 +1642,18 @@
             silmeOnayiIste(
                 "Personel Hesabı Silinecek",
                 "Bu personel hesabını silmek istediğinize emin misiniz?",
-                () => {
-                    personeller = personeller.filter(p => p.id !== id);
-                    localStorage.setItem('klinik_personeller', JSON.stringify(personeller));
-                    personelleriEkranaBas();
-                    showToast('Personel hesabı silindi.');
+                async () => {
+                    const { error } = await _supabase.from('personeller').delete().eq('id', id);
+                    if (!error) {
+                        await personelleriGetirSupabase();
+                        showToast('Personel hesabı silindi.');
+                    }
                 }
             );
         }
 
         function personelSec(id) {
             aktifPersonelId = id;
-            localStorage.setItem('klinik_aktif_personel', id);
             personelleriEkranaBas();
             aktifPersoneliGuncelle();
             showToast('Aktif profil değiştirildi.');
@@ -1533,4 +1677,15 @@
         }
     </script>
 </body>
+    <!-- SUPABASE SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        // --- SUPABASE BAĞLANTI AYARLARI ---
+        const SUPABASE_URL = 'https://chvtmeobzytzlaqwzai.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_-rGAVu80_NzoJ7KYW-04Xw_f8ePw...'; // Kendi key'in
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // Giriş Yapma Kontrolü
+        function loginYap(e) {
+            ...
 </html>
