@@ -421,7 +421,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 mb-1">Doğum Tarihi</label>
-                        <input type="date" id="hasta-dogum" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="date" id="hasta-dogum" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
                 <div>
@@ -466,7 +466,7 @@
                     </div>
                     <div>
                         <label class="block text-xs font-medium text-slate-600 mb-1">Doğum Tarihi</label>
-                        <input type="date" id="edit-hasta-dogum" required class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <input type="date" id="edit-hasta-dogum" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
                 <div>
@@ -651,7 +651,15 @@
         <span id="toast-message">İşlem Başarılı</span>
     </div>
 
+    <!-- SUPABASE KÜTÜPHANESİ VE UYGULAMA JAVASCRIPT KODLARI -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
+        // 1. SUPABASE BİLGiLERİ
+        const SUPABASE_URL = 'https://chvtm...supabase.co'; // Data API sayfasından aldığınız URL
+        const SUPABASE_ANON_KEY = 'sb_publishable_--rGAVu80_...'; // Kopyaladığınız Publishable Key
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         // Giriş Yapma Kontrolü
         function loginYap(e) {
             e.preventDefault();
@@ -670,7 +678,7 @@
 
         let mevcuthangigun = new Date();
         let randevular = JSON.parse(localStorage.getItem('klinik_randevular')) || [];
-        let hastalar = JSON.parse(localStorage.getItem('klinik_hastalar')) || [];
+        let hastalar = []; // Supabase üzerinden çekilecek
         let gelirler = JSON.parse(localStorage.getItem('klinik_gelirler')) || [];
         let taksitler = JSON.parse(localStorage.getItem('klinik_taksitler')) || [
             { id: 1, hasta: "Ahmet Yılmaz", islem: "Zirkonyum Kaplama", toplam: 15000, taksitSayisi: 5, odenenTutar: 6000, baslangicTarihi: "2026-08-01" }
@@ -728,7 +736,7 @@
         let mevcuthangigunTarihleri = []; 
         let silmeIslemCallback = null;
 
-        // Sayfalandırma Mantığı (20 Hasta/Sayfa)
+        // Sayfalandırma Mantığı
         let mevcutHastaSayfasi = 1;
         const sayfaBasiHasta = 20;
 
@@ -756,14 +764,12 @@
 
             tabloyuOlustur();
             haftayiGuncelle();
-            hastalariEkranaBas();
+            hastalariGetir(); // Supabase'den çek
             gelirleriEkranaBas();
             taksitleriEkranaBas();
             fiyatlariEkranaBas(fiyatListesi);
             personelleriEkranaBas();
             aktifPersoneliGuncelle();
-            randevuHastaSelectDoldur();
-            gelirHastaSelectDoldur();
 
             document.getElementById('gelir-tarih').value = formatDateISO(new Date());
 
@@ -776,15 +782,14 @@
             });
         });
 
-        // Hasta Açılır Menüleri Doldurur
         function randevuHastaSelectDoldur() {
             const select = document.getElementById('modal-hasta-select');
             select.innerHTML = '';
             if (hastalar.length === 0) {
-                select.innerHTML = `<option value="">Kayıtlı Hasta Bulunamadı (Önce Kaydediniz)</option>`;
+                select.innerHTML = `<option value="">Kayıtlı Hasta Bulunamadı</option>`;
             } else {
                 hastalar.forEach(h => {
-                    select.innerHTML += `<option value="${h.adSoyad}">${h.adSoyad} (${h.dosyaNo})</option>`;
+                    select.innerHTML += `<option value="${h.ad_soyad}">${h.ad_soyad} (${h.dosya_no || ''})</option>`;
                 });
             }
         }
@@ -796,7 +801,7 @@
                 select.innerHTML = `<option value="">Kayıtlı Hasta Bulunamadı</option>`;
             } else {
                 hastalar.forEach(h => {
-                    select.innerHTML += `<option value="${h.adSoyad}">${h.adSoyad} (${h.dosyaNo})</option>`;
+                    select.innerHTML += `<option value="${h.ad_soyad}">${h.ad_soyad} (${h.dosya_no || ''})</option>`;
                 });
             }
         }
@@ -996,74 +1001,76 @@
             );
         }
 
-        function yasHesapla(dogumTarihiStr) {
-            if (!dogumTarihiStr) return '';
-            const dogum = new Date(dogumTarihiStr);
-            const bugun = new Date();
-            let yas = bugun.getFullYear() - dogum.getFullYear();
-            const ayFarki = bugun.getMonth() - dogum.getMonth();
-            if (ayFarki < 0 || (ayFarki === 0 && bugun.getDate() < dogum.getDate())) {
-                yas--;
-            }
-            return yas >= 0 ? yas : 0;
-        }
-
-        function hastaKaydet(e) {
+        /* --- SUPABASE HASTA İŞLEMLERİ --- */
+        async function hastaKaydet(e) {
             e.preventDefault();
-            const dosyaNo = document.getElementById('hasta-dosyano').value;
-            const tcNo = document.getElementById('hasta-tc').value;
-            const adSoyad = document.getElementById('hasta-adsoyad').value;
-            const telefon = document.getElementById('hasta-telefon').value;
-            const dogumTarihi = document.getElementById('hasta-dogum').value;
-            const sebep = document.getElementById('hasta-sebep').value;
+            const yeniHasta = {
+                dosya_no: document.getElementById('hasta-dosyano').value,
+                tc: document.getElementById('hasta-tc').value,
+                ad_soyad: document.getElementById('hasta-adsoyad').value,
+                telefon: document.getElementById('hasta-telefon').value,
+                sebep: document.getElementById('hasta-sebep').value
+            };
 
-            const yeniHasta = { id: Date.now(), dosyaNo, tcNo, adSoyad, telefon, dogumTarihi, sebep };
-            hastalar.push(yeniHasta);
-            localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
+            const { data, error } = await _supabase
+                .from('hastalar')
+                .insert([yeniHasta]);
 
-            hastalariEkranaBas();
-            randevuHastaSelectDoldur();
-            gelirHastaSelectDoldur();
-            closeModal('hasta-modal');
-            showToast(`${adSoyad} hasta kaydı oluşturuldu.`);
-            e.target.reset();
+            if (error) {
+                console.error('Hata:', error);
+                alert('Hasta kaydedilemedi! Lütfen Supabase RLS ayarlarını kontrol edin.');
+            } else {
+                showToast(`${yeniHasta.ad_soyad} kaydı Supabase'e kaydedildi.`);
+                closeModal('hasta-modal');
+                hastalariGetir();
+                e.target.reset();
+            }
         }
 
-        /* --- HASTA KAYITLARI (20'Lİ SAYFALANDIRMA) --- */
-        function hastalariEkranaBas(liste) {
+        async function hastalariGetir(liste) {
+            if (!liste) {
+                const { data, error } = await _supabase
+                    .from('hastalar')
+                    .select('*')
+                    .order('id', { ascending: false });
+
+                if (error) {
+                    console.error('Veri çekilemedi:', error);
+                    return;
+                }
+                hastalar = data || [];
+            } else {
+                hastalar = liste;
+            }
+
             const tbody = document.getElementById('hasta-tablosu-body');
             tbody.innerHTML = '';
 
-            const kaynakListe = liste || hastalar;
-            const toplamHasta = kaynakListe.length;
+            const toplamHasta = hastalar.length;
             const toplamSayfa = Math.ceil(toplamHasta / sayfaBasiHasta) || 1;
 
             if (mevcutHastaSayfasi > toplamSayfa) mevcutHastaSayfasi = toplamSayfa;
             if (mevcutHastaSayfasi < 1) mevcutHastaSayfasi = 1;
 
             const startIndex = (mevcutHastaSayfasi - 1) * sayfaBasiHasta;
-            const sayfaVerisi = kaynakListe.slice(startIndex, startIndex + sayfaBasiHasta);
+            const sayfaVerisi = hastalar.slice(startIndex, startIndex + sayfaBasiHasta);
 
             if (sayfaVerisi.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Kayıtlı hasta bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Veritabanında kayıtlı hasta bulunamadı.</td></tr>`;
             } else {
                 sayfaVerisi.forEach(h => {
-                    const yas = yasHesapla(h.dogumTarihi);
                     tbody.innerHTML += `
                         <tr onclick="hastaDuzenleAc(${h.id})" class="hover:bg-slate-50 border-b border-slate-200 cursor-pointer transition">
-                            <td class="p-4 font-mono text-xs font-semibold text-blue-600">${h.dosyaNo}</td>
-                            <td class="p-4 font-mono text-xs text-slate-500">${h.tcNo || '-'}</td>
-                            <td class="p-4 font-semibold text-slate-800">
-                                ${h.adSoyad} 
-                                ${yas !== '' ? `<span class="bg-slate-100 text-slate-600 text-[11px] font-normal px-2 py-0.5 rounded-full ml-1 border border-slate-200">${yas} yaş</span>` : ''}
-                            </td>
-                            <td class="p-4 text-slate-600">${h.telefon}</td>
-                            <td class="p-4 text-slate-500 text-xs max-w-xs truncate">${h.sebep}</td>
+                            <td class="p-4 font-mono text-xs font-semibold text-blue-600">${h.dosya_no || '-'}</td>
+                            <td class="p-4 font-mono text-xs text-slate-500">${h.tc || '-'}</td>
+                            <td class="p-4 font-semibold text-slate-800">${h.ad_soyad || '-'}</td>
+                            <td class="p-4 text-slate-600">${h.telefon || '-'}</td>
+                            <td class="p-4 text-slate-500 text-xs max-w-xs truncate">${h.sebep || '-'}</td>
                             <td class="p-4 text-center space-x-2" onclick="event.stopPropagation()">
                                 <button onclick="hastaDuzenleAc(${h.id})" class="text-blue-600 hover:text-blue-800 p-1" title="Düzenle">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button onclick="hastaSil(${h.id})" class="text-red-500 hover:text-red-700 p-1" title="Hasta Kaydını Sil">
+                                <button onclick="hastaSil(${h.id})" class="text-red-500 hover:text-red-700 p-1" title="Sil">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -1072,16 +1079,18 @@
                 });
             }
 
-            // Sayfalama Elemanlarını Güncelle
             document.getElementById('hasta-sayfa-bilgi').innerText = `Toplam ${toplamHasta} hastadan ${startIndex + 1}-${Math.min(startIndex + sayfaBasiHasta, toplamHasta)} arası gösteriliyor`;
             document.getElementById('hasta-sayfa-numara').innerText = `${mevcutHastaSayfasi} / ${toplamSayfa}`;
             document.getElementById('btn-hasta-onceki').disabled = mevcutHastaSayfasi === 1;
             document.getElementById('btn-hasta-sonraki').disabled = mevcutHastaSayfasi === toplamSayfa;
+
+            randevuHastaSelectDoldur();
+            gelirHastaSelectDoldur();
         }
 
         function hastaSayfaDegistir(yon) {
             mevcutHastaSayfasi += yon;
-            hastalariEkranaBas();
+            hastalariGetir(hastalar);
         }
 
         function hastaDuzenleAc(id) {
@@ -1089,66 +1098,75 @@
             if (!hasta) return;
 
             document.getElementById('edit-hasta-id').value = hasta.id;
-            document.getElementById('edit-hasta-dosyano').value = hasta.dosyaNo || '';
-            document.getElementById('edit-hasta-tc').value = hasta.tcNo || '';
-            document.getElementById('edit-hasta-adsoyad').value = hasta.adSoyad || '';
+            document.getElementById('edit-hasta-dosyano').value = hasta.dosya_no || '';
+            document.getElementById('edit-hasta-tc').value = hasta.tc || '';
+            document.getElementById('edit-hasta-adsoyad').value = hasta.ad_soyad || '';
             document.getElementById('edit-hasta-telefon').value = hasta.telefon || '';
-            document.getElementById('edit-hasta-dogum').value = hasta.dogumTarihi || '';
             document.getElementById('edit-hasta-sebep').value = hasta.sebep || '';
 
             openModal('hasta-duzenle-modal');
         }
 
-        function hastaGuncelle(e) {
+        async function hastaGuncelle(e) {
             e.preventDefault();
             const id = parseInt(document.getElementById('edit-hasta-id').value);
-            const hastaIndex = hastalar.findIndex(h => h.id === id);
 
-            if (hastaIndex !== -1) {
-                hastalar[hastaIndex].dosyaNo = document.getElementById('edit-hasta-dosyano').value;
-                hastalar[hastaIndex].tcNo = document.getElementById('edit-hasta-tc').value;
-                hastalar[hastaIndex].adSoyad = document.getElementById('edit-hasta-adsoyad').value;
-                hastalar[hastaIndex].telefon = document.getElementById('edit-hasta-telefon').value;
-                hastalar[hastaIndex].dogumTarihi = document.getElementById('edit-hasta-dogum').value;
-                hastalar[hastaIndex].sebep = document.getElementById('edit-hasta-sebep').value;
+            const guncelData = {
+                dosya_no: document.getElementById('edit-hasta-dosyano').value,
+                tc: document.getElementById('edit-hasta-tc').value,
+                ad_soyad: document.getElementById('edit-hasta-adsoyad').value,
+                telefon: document.getElementById('edit-hasta-telefon').value,
+                sebep: document.getElementById('edit-hasta-sebep').value
+            };
 
-                localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
-                hastalariEkranaBas();
-                randevuHastaSelectDoldur();
-                gelirHastaSelectDoldur();
+            const { error } = await _supabase
+                .from('hastalar')
+                .update(guncelData)
+                .eq('id', id);
+
+            if (error) {
+                console.error(error);
+                alert('Güncellenemedi');
+            } else {
                 closeModal('hasta-duzenle-modal');
-                showToast('Hasta bilgileri başarıyla güncellendi.');
+                hastalariGetir();
+                showToast('Hasta bilgileri güncellendi.');
             }
         }
 
         function hastaAramaYap() {
-            const inputVal = document.getElementById('hasta-ara-input').value;
-            const query = inputVal.toLocaleLowerCase('tr-TR');
+            const query = document.getElementById('hasta-ara-input').value.toLocaleLowerCase('tr-TR');
             const filtrelenmis = hastalar.filter(h => 
-                (h.adSoyad && h.adSoyad.toLocaleLowerCase('tr-TR').includes(query)) ||
-                (h.tcNo && h.tcNo.includes(query)) ||
-                (h.dosyaNo && h.dosyaNo.toLocaleLowerCase('tr-TR').includes(query))
+                (h.ad_soyad && h.ad_soyad.toLocaleLowerCase('tr-TR').includes(query)) ||
+                (h.tc && h.tc.includes(query)) ||
+                (h.dosya_no && h.dosya_no.toLocaleLowerCase('tr-TR').includes(query))
             );
             mevcutHastaSayfasi = 1;
-            hastalariEkranaBas(filtrelenmis);
+            hastalariGetir(filtrelenmis);
         }
 
-        function hastaSil(id) {
+        async function hastaSil(id) {
             silmeOnayiIste(
                 "Hasta Kaydı Silinecek",
-                "Bu hasta kaydını silmek istediğinize emin misiniz?",
-                () => {
-                    hastalar = hastalar.filter(h => h.id !== id);
-                    localStorage.setItem('klinik_hastalar', JSON.stringify(hastalar));
-                    hastalariEkranaBas();
-                    randevuHastaSelectDoldur();
-                    gelirHastaSelectDoldur();
-                    showToast('Hasta kaydı silindi.');
+                "Bu hasta kaydını veritabanından silmek istediğinize emin misiniz?",
+                async () => {
+                    const { error } = await _supabase
+                        .from('hastalar')
+                        .delete()
+                        .eq('id', id);
+
+                    if (error) {
+                        console.error(error);
+                        alert('Silinemedi');
+                    } else {
+                        hastalariGetir();
+                        showToast('Hasta kaydı silindi.');
+                    }
                 }
             );
         }
 
-        /* --- GELİR TAKİBİ VE HESAPLAMA FONKSİYONLARI --- */
+        /* --- GELİR TAKİBİ --- */
         function gelirKaydet(e) {
             e.preventDefault();
             const hasta = document.getElementById('gelir-hasta-select').value;
@@ -1173,9 +1191,8 @@
             tbody.innerHTML = '';
 
             if (gelirler.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Henüz kaydedilmiş gelir/ödeme bulunmamaktadır.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Henüz kaydedilmiş gelir bulunmamaktadır.</td></tr>`;
             } else {
-                // Tarihe göre azalan sırala
                 const siraliGelirler = [...gelirler].sort((a,b) => new Date(b.tarih) - new Date(a.tarih));
                 siraliGelirler.forEach(g => {
                     tbody.innerHTML += `
@@ -1188,7 +1205,7 @@
                             </td>
                             <td class="p-4 text-right font-mono font-bold text-emerald-600">+${g.tutar.toLocaleString('tr-TR')} ₺</td>
                             <td class="p-4 text-center">
-                                <button onclick="gelirSil(${g.id})" class="text-red-500 hover:text-red-700 p-1" title="Gelir Kaydını Sil">
+                                <button onclick="gelirSil(${g.id})" class="text-red-500 hover:text-red-700 p-1" title="Sil">
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </td>
@@ -1270,11 +1287,6 @@
             const bugun = new Date();
 
             taksitler.forEach(t => {
-                if (t.odenenTutar === undefined) {
-                    const birim = t.toplam / t.taksitSayisi;
-                    t.odenenTutar = (t.odenenTaksit || 0) * birim;
-                }
-
                 const birimTaksit = t.toplam / t.taksitSayisi;
                 const kalanBorc = Math.max(0, t.toplam - t.odenenTutar);
                 const odenenTaksitSayisi = Math.min(t.taksitSayisi, Math.floor(t.odenenTutar / birimTaksit));
@@ -1345,7 +1357,6 @@
                     localStorage.setItem('klinik_taksitler', JSON.stringify(taksitler));
                     taksitleriEkranaBas();
                     
-                    // Otomatik Gelir Ekle
                     const yeniGelir = { id: Date.now(), hasta: t.hasta, islem: `${t.islem} (Taksit Ödemesi)`, tutar: girilenTutar, tur: "Taksit Tahsilatı", tarih: formatDateISO(new Date()) };
                     gelirler.push(yeniGelir);
                     localStorage.setItem('klinik_gelirler', JSON.stringify(gelirler));
@@ -1371,7 +1382,7 @@
             );
         }
 
-        /* --- FİYAT LİSTESİ VE EKLEME FONKSİYONLARI --- */
+        /* --- FİYAT LİSTESİ --- */
         function yeniFiyatKaydet(e) {
             e.preventDefault();
             const islem = document.getElementById('yeni-fiyat-islem').value;
@@ -1391,7 +1402,7 @@
             tbody.innerHTML = '';
 
             if (liste.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-400">Aramanıza uygun işlem bulunamadı.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="3" class="p-6 text-center text-slate-400">İşlem bulunamadı.</td></tr>`;
                 return;
             }
 
@@ -1411,7 +1422,7 @@
         function fiyatSil(index) {
             silmeOnayiIste(
                 "Fiyat Silinecek",
-                "Bu işlem tarifesini fiyat listesinden silmek istediğinize emin misiniz?",
+                "Bu işlemi fiyat listesinden silmek istediğinize emin misiniz?",
                 () => {
                     fiyatListesi.splice(index, 1);
                     localStorage.setItem('klinik_fiyatlar', JSON.stringify(fiyatListesi));
@@ -1427,7 +1438,7 @@
             fiyatlariEkranaBas(filtrelenmis);
         }
 
-        /* --- PERSONEL FONKSİYONLARI --- */
+        /* --- PERSONEL İŞLEMLERİ --- */
         function personelKaydet(e) {
             e.preventDefault();
             const adSoyad = document.getElementById('personel-adsoyad').value;
@@ -1464,7 +1475,7 @@
                                     </div>
                                 </div>
                                 ${!isAktif && personeller.length > 1 ? 
-                                    `<button onclick="personelSil(${p.id})" class="text-slate-400 hover:text-red-500 transition p-1" title="Hesabı Sil"><i class="fa-solid fa-trash"></i></button>` : ''
+                                    `<button onclick="personelSil(${p.id})" class="text-slate-400 hover:text-red-500 transition p-1" title="Sil"><i class="fa-solid fa-trash"></i></button>` : ''
                                 }
                             </div>
                             <div class="space-y-1.5 text-xs text-slate-500 mb-4">
